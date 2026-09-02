@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Government Service & Workflow Authentication{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white rounded-2xl p-6 sm:p-8 shadow-md relative overflow-hidden">
+        <div class="relative z-10 space-y-2">
+            <span class="px-3 py-1 bg-white/20 text-white text-[11px] font-bold rounded-full uppercase tracking-wider">
+                Digital India • SIH 2026
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-black tracking-tight">National File Verification & Workflow Portal</h1>
+            <p class="text-orange-100 text-xs sm:text-sm max-w-2xl">
+                Proactive AI Delay Intelligence and digital workflow tracking for citizen service delivery.
+            </p>
+        </div>
+    </div>
+
+    <!-- Dual Login Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Citizen Login Card -->
+        <div class="bg-white rounded-2xl p-7 border-2 border-orange-500 shadow-lg ring-4 ring-orange-100/60 space-y-5">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center font-bold">
+                    <i data-lucide="user-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-black text-slate-900">Citizen Login</h2>
+                    <span class="text-xs text-orange-700 font-semibold">Mobile OTP Authentication</span>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Apply for certificates, permits, pensions, and government schemes with instant DigiLocker KYC verification.
+            </p>
+
+            <form action="/auth/verify-otp" method="POST" class="space-y-4">
+                <input type="hidden" name="role" value="citizen">
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Registered Mobile Number</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">+91</span>
+                        <input type="tel" name="mobile_number" required value="9876543210"
+                               class="w-full pl-10 pr-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none font-mono">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Enter 6-Digit OTP</label>
+                        <span class="text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Demo OTP: 123456</span>
+                    </div>
+                    <input type="text" name="otp" required maxlength="6" value="123456"
+                           class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none font-mono tracking-widest text-center font-bold">
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg text-xs transition shadow flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Validate OTP & Enter Citizen Portal
+                </button>
+            </form>
+        </div>
+
+        <!-- Officer Login Card -->
+        <div class="bg-white rounded-2xl p-7 border-2 border-slate-200 shadow-sm space-y-5 hover:border-slate-300 transition">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center font-bold">
+                    <i data-lucide="shield" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-black text-slate-900">Officer Login</h2>
+                    <span class="text-xs text-slate-500 font-semibold">Departmental Access Control</span>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Log in to your authorized department queue (Municipal, Pension, Revenue, Education) to process assigned files.
+            </p>
+
+            <form action="/auth/officer-login" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Select Officer & Department</label>
+                    <select name="officer_id" class="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none bg-white text-slate-800">
+                        {% for off in officers %}
+                            <option value="{{ off.id }}">{{ off.name }} - {{ off.department }} ({{ off.role }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Access Passcode</label>
+                    <input type="password" name="pin" value="gov@2026"
+                           class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none font-mono">
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-xs transition shadow flex items-center justify-center gap-2">
+                    <i data-lucide="key-round" class="w-4 h-4"></i> Access Department Queue
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

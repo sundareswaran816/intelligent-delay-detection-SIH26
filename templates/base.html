@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}National File Verification & Delay Intelligence Portal - SIH 2026{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        govOrange: '#EA580C',
+                        govOrangeDark: '#C2410C',
+                        govGreen: '#15803D',
+                        govGreenDark: '#166534',
+                        govNavy: '#1E293B',
+                        govHeader: '#0B192C'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .tricolor-strip {
+            background: linear-gradient(90deg, #FF9933 0%, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%, #138808 100%);
+            height: 5px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
+    <!-- Top Tricolor Ribbon -->
+    <div class="tricolor-strip shadow-sm"></div>
+
+    <!-- Government Official Header -->
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+        <!-- Top Subheader -->
+        <div class="bg-slate-900 text-white text-[11px] py-1 px-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="font-medium text-slate-300">Government of India • Ministry of Personnel, Public Grievances and Pensions</span>
+                </div>
+                <div class="flex items-center gap-3 text-slate-400">
+                    <span>Smart India Hackathon 2026</span>
+                    <span>|</span>
+                    <span class="text-emerald-400 font-semibold">● AI Delay Engine Active</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navbar -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Portal Brand / Emblem -->
+                <a href="{% if user_role == 'citizen' %}/citizen{% elif user_role == 'officer' %}/officer{% else %}/{% endif %}" class="flex items-center space-x-3.5">
+                    <div class="w-12 h-12 rounded-xl bg-orange-50 border-2 border-orange-500 flex flex-col items-center justify-center shadow-sm">
+                        <span class="text-xs font-black text-orange-600">🇮🇳 GOV</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-xl tracking-tight text-slate-900">CIVIORA</span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-orange-100 text-orange-800 border border-orange-200 rounded">
+                                File Intelligence Portal
+                            </span>
+                        </div>
+                        <span class="block text-xs text-slate-500 font-medium">National Workflow & Delay Prevention System</span>
+                    </div>
+                </a>
+
+                <!-- Role Specific Navigation -->
+                <nav class="flex items-center space-x-2">
+                    {% if user_role == 'citizen' %}
+                        <a href="/citizen" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 border border-slate-200">
+                            <i data-lucide="layout-list" class="w-4 h-4 text-orange-600"></i> My Applications
+                        </a>
+                        <a href="/citizen/wizard" class="px-4 py-2 rounded-lg text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white transition flex items-center gap-1.5 shadow-sm">
+                            <i data-lucide="file-plus-2" class="w-4 h-4"></i> Apply for Service
+                        </a>
+                        <a href="/logout" class="px-3 py-2 rounded-lg text-xs font-semibold text-rose-700 hover:bg-rose-50 transition flex items-center gap-1 border border-rose-200">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
+                        </a>
+                    {% elif user_role == 'officer' %}
+                        <a href="/officer" class="px-3.5 py-2 rounded-lg text-xs font-bold text-orange-900 bg-orange-50 border border-orange-200 flex items-center gap-1.5">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-orange-600"></i> Assigned Department Queue
+                        </a>
+                        <a href="/dept-head" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 border border-slate-200">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-600"></i> SLA & Bottlenecks
+                        </a>
+                        <a href="/admin" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 border border-slate-200">
+                            <i data-lucide="webhook" class="w-4 h-4 text-blue-600"></i> Webhook Logs
+                        </a>
+                        <a href="/logout" class="px-3 py-2 rounded-lg text-xs font-semibold text-rose-700 hover:bg-rose-50 transition flex items-center gap-1 border border-rose-200">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
+                        </a>
+                    {% else %}
+                        <div class="flex items-center gap-2 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span> Authorized Portal
+                        </div>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-2">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-700">Team Civiora</span> • Smart India Hackathon 2026
+            </div>
+            <div class="flex gap-4">
+                <span>Designed in accordance with National e-Governance Standards</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

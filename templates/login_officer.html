@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Government Officer Authentication - Department Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto space-y-6 py-4">
+    <!-- Back link -->
+    <a href="/" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 transition">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Role Selection
+    </a>
+
+    <div class="bg-white rounded-2xl p-7 border-2 border-slate-800 shadow-xl ring-4 ring-slate-100 space-y-6">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold">
+                <i data-lucide="shield" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-black text-slate-900">Officer Sign In</h2>
+                <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">Departmental Credentials Gateway</span>
+            </div>
+        </div>
+
+        {% if error %}
+            <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-bold text-rose-700 flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i> {{ error }}
+            </div>
+        {% endif %}
+
+        <form action="/auth/officer/verify" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Official Department *</label>
+                <select name="department" required class="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-800 focus:outline-none bg-white text-slate-900">
+                    {% for dept in departments %}
+                        <option value="{{ dept.id }}" {% if dept.id == 'MUNICIPAL' %}selected{% endif %}>
+                            {{ dept.name }} ({{ dept.id }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Officer Login ID / Badge Number *</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">#</span>
+                    <input type="text" name="officer_login_id" required placeholder="e.g. OFF-103 or anil.verma" value="OFF-103"
+                           class="w-full pl-8 pr-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-800 focus:outline-none font-mono">
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">Valid IDs: OFF-101 (Pension), OFF-102 (Revenue), OFF-103 (Municipal), OFF-104 (Education)</span>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Access Password / Security PIN *</label>
+                <input type="password" name="password" required value="gov@2026" placeholder="••••••••"
+                       class="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-800 focus:outline-none font-mono">
+                <span class="text-[10px] text-slate-400 font-medium">Demo Password: <strong class="text-slate-600">gov@2026</strong></span>
+            </div>
+
+            <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-black text-white font-black rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                <i data-lucide="key-round" class="w-4 h-4"></i> Authenticate & Enter Department Queue
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

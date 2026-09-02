@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block title %}Citizen Service Application & Verification Wizard{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+    
+    <!-- Wizard Step Progress Bar -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between">
+            <!-- Step 1 -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(1)">
+                <div id="step-badge-1" class="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
+                    1
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs font-bold text-slate-900">Select Service</div>
+                    <div class="text-[10px] text-slate-400">Step 1 of 6</div>
+                </div>
+            </div>
+            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-1"></div>
+
+            <!-- Step 2 -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(2)">
+                <div id="step-badge-2" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
+                    2
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs font-bold text-slate-600">Checklist</div>
+                    <div class="text-[10px] text-slate-400">Step 2 of 6</div>
+                </div>
+            </div>
+            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-2"></div>
+
+            <!-- Step 3 -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(3)">
+                <div id="step-badge-3" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
+                    3
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs font-bold text-slate-600">Upload Files</div>
+                    <div class="text-[10px] text-slate-400">Step 3 of 6</div>
+                </div>
+            </div>
+            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-3"></div>
+
+            <!-- Step 4 -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(4)">
+                <div id="step-badge-4" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
+                    4
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs font-bold text-slate-600">DigiLocker KYC</div>
+                    <div class="text-[10px] text-slate-400">Step 4 of 6</div>
+                </div>
+            </div>
+            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-4"></div>
+
+            <!-- Step 5 -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(5)">
+                <div id="step-badge-5" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
+                    5
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs font-bold text-slate-600">Check & Correct</div>
+                    <div class="text-[10px] text-slate-400">Step 5 of 6</div>
+                </div>
+            </div>
+            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-5"></div>
+
+            <!-- Step 6 -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(6)">
+                <div id="step-badge-6" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
+                    6
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs font-bold text-slate-600">Payment & Submit</div>
+                    <div class="text-[10px] text-slate-400">Step 6 of 6</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN FORM & STEPS CONTAINER -->
+    <form id="wizardForm" action="/citizen/wizard/complete" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="selected_service_id" id="inputServiceId" value="SRV-PENSION-01">
+        <input type="hidden" name="applicant_name" id="inputApplicantName" value="Citizen User">
+        <input type="hidden" name="applicant_phone" id="inputApplicantPhone" value="9876543210">
+        <input type="hidden" name="digilocker_authenticated" id="inputDigiLockerAuth" value="true">
+        <input type="hidden" name="has_reuploaded" id="inputHasReuploaded" value="false">
+
+        <!-- ================= STEP 1: SERVICE SELECTION (Spec §3) ================= -->
+        <div id="step-1" class="wizard-step bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 2: Service Selection</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Select Required Government Service</h2>
+                <p class="text-xs text-slate-500">Choose the government scheme, certificate, or permit you wish to apply for.</p>
+            </div>
+
+            <!-- Applicant Basic Info Inputs -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-orange-50/50 p-4 rounded-xl border border-orange-200">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Applicant Full Name *</label>
+                    <input type="text" id="wizardNameField" required value="Suresh Natarajan"
+                           class="w-full px-3 py-2 text-xs font-semibold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number (OTP Verified) *</label>
+                    <input type="tel" id="wizardPhoneField" required value="9876543210"
+                           class="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none bg-white font-mono">
+                </div>
+            </div>
+
+            <!-- Service Selection Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for srv in services %}
+                    <div onclick="selectService('{{ srv.id }}', '{{ srv.name }}', {{ srv.fee }}, {{ srv.sla_days }})" 
+                         id="service-card-{{ srv.id }}"
+                         class="service-card cursor-pointer p-5 rounded-xl border-2 {% if loop.first %}border-orange-500 bg-orange-50/50 ring-2 ring-orange-200{% else %}border-slate-200 bg-white hover:border-slate-300{% endif %} transition space-y-3">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold px-2 py-0.5 bg-orange-100 text-orange-800 rounded border border-orange-200">
+                                {{ srv.category }}
+                            </span>
+                            <span class="text-xs font-black text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                                Fee: {% if srv.fee == 0 %}FREE{% else %}₹{{ srv.fee }}{% endif %}
+                            </span>
+                        </div>
+                        <h3 class="font-black text-base text-slate-900">{{ srv.name }}</h3>
+                        <p class="text-xs text-slate-600 line-clamp-2">{{ srv.description }}</p>
+                        <div class="text-[11px] text-slate-500 flex items-center justify-between pt-2 border-t border-slate-100 font-medium">
+                            <span>Dept: <strong class="text-slate-800">{{ srv.department }}</strong></span>
+                            <span>Standard SLA: <strong class="text-orange-700">{{ srv.sla_days }} Days</strong></span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button type="button" onclick="goToStep(2)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
+                    Continue to Document Checklist <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= STEP 2: DOCUMENT REQUIREMENTS & GUIDELINES (Spec §4) ================= -->
+        <div id="step-2" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 3: Instructions & Document Checklist</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Required Documents & Upload Guidelines</h2>
+                <p class="text-xs text-slate-500">Please review the checklist and accepted formats before uploading to avoid rejection delays.</p>
+            </div>
+
+            <div id="checklistContainer" class="space-y-4">
+                {% for doc in services[0].required_documents %}
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-slate-900 flex items-center gap-2">
+                                <i data-lucide="file-check-2" class="w-4 h-4 text-orange-600"></i> {{ doc.name }}
+                            </span>
+                            <span class="text-[10px] font-black px-2 py-0.5 rounded {% if doc.mandatory %}bg-rose-100 text-rose-800 border border-rose-200{% else %}bg-slate-200 text-slate-700{% endif %}">
+                                {% if doc.mandatory %}MANDATORY{% else %}OPTIONAL{% endif %}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 font-medium">
+                            <div><strong>Accepted Formats:</strong> {{ doc.accepted_formats }} (Max {{ doc.max_size_mb }}MB)</div>
+                            <div><strong>Validity:</strong> {{ doc.validity }}</div>
+                        </div>
+                        <p class="text-xs text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200 font-medium">
+                            💡 <strong>Instruction:</strong> {{ doc.instructions }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="flex justify-between pt-2">
+                <button type="button" onclick="goToStep(1)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
+                    ← Back
+                </button>
+                <button type="button" onclick="goToStep(3)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
+                    Proceed to Upload <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= STEP 3: DOCUMENT UPLOAD (Spec §5) ================= -->
+        <div id="step-3" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 4: Document Upload</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Upload Required Documents</h2>
+                <p class="text-xs text-slate-500">Attach copies of your files. Basic format and readability validation will be performed.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
+                    <label class="block text-xs font-bold text-slate-800">1. Identity Proof (Aadhaar Card) *</label>
+                    <div class="flex items-center gap-3">
+                        <input type="file" id="fileAadhaar" class="text-xs text-slate-600 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                        <span class="text-xs text-emerald-700 font-bold" id="statusAadhaar">✓ Valid format (PDF/JPG)</span>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
+                    <label class="block text-xs font-bold text-slate-800">2. Service Specific Document / Certificate *</label>
+                    <div class="flex items-center gap-3">
+                        <input type="file" id="fileServiceDoc" class="text-xs text-slate-600 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                        <span class="text-xs text-emerald-700 font-bold">✓ Ready for DigiLocker Check</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between pt-2">
+                <button type="button" onclick="goToStep(2)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
+                    ← Back
+                </button>
+                <button type="button" onclick="goToStep(4)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
+                    Continue to DigiLocker Verification <i data-lucide="shield-check" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= STEP 4: DIGILOCKER VERIFICATION (Spec §6) ================= -->
+        <div id="step-4" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 5: Digital Record Verification</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">DigiLocker Document Authentication</h2>
+                <p class="text-xs text-slate-500">Authenticate with National DigiLocker repository to auto-verify your credentials against trusted records.</p>
+            </div>
+
+            <div class="p-6 bg-gradient-to-br from-orange-50/60 to-amber-50/60 rounded-2xl border border-orange-200 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-orange-600 text-white font-black flex items-center justify-center text-xs shadow-sm">
+                            DL
+                        </div>
+                        <div>
+                            <div class="font-black text-slate-900 text-sm">DigiLocker Secure Document Wallet</div>
+                            <div class="text-[11px] text-slate-500 font-medium">Ministry of Electronics and Information Technology (MeitY)</div>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 bg-orange-100 text-orange-800 text-[11px] font-black rounded-full border border-orange-300">
+                        Authenticated
+                    </span>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-orange-100 space-y-3">
+                    <div class="text-xs text-slate-700 font-semibold">Authenticated Identity: <strong class="text-slate-900 font-black">Suresh Natarajan</strong> (UIDAI: ••••••••8819)</div>
+                    <div class="text-xs text-slate-700 font-bold">Synced DigiLocker Records:</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
+                            <span class="font-medium">UIDAI Aadhaar Record</span>
+                            <span class="text-emerald-700 font-black">✓ Verified</span>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
+                            <span class="font-medium">Departmental Certificate Proof</span>
+                            <span class="text-amber-600 font-black">⚠️ Needs Match</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between pt-2">
+                <button type="button" onclick="goToStep(3)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
+                    ← Back
+                </button>
+                <button type="button" onclick="runDocumentCorrectnessCheck()" class="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
+                    Execute Smart Correctness Check <i data-lucide="zap" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= STEP 5: DOCUMENT CORRECTNESS & ACTIONABLE RE-UPLOAD (Spec §7 & §8) ================= -->
+        <div id="step-5" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 6: Smart Document Verification & Correction</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Document Correctness Verification Results</h2>
+                <p class="text-xs text-slate-500">Civiora Smart Verification Engine compares your uploaded files with DigiLocker and SLA rules.</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Doc 1: Aadhaar -->
+                <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/60 flex items-center justify-between">
+                    <div class="space-y-1">
+                        <div class="font-bold text-xs text-slate-900 flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Aadhaar Identity Record
+                        </div>
+                        <p class="text-[11px] text-emerald-800 font-medium">Name, DOB, and biometric token successfully verified with UIDAI.</p>
+                    </div>
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-black rounded-full border border-emerald-300">
+                        ✅ Verified
+                    </span>
+                </div>
+
+                <!-- Doc 2: Service Proof with Problem & Actionable Instructions (Spec §8) -->
+                <div id="reuploadSection" class="p-5 rounded-xl border-2 border-rose-200 bg-rose-50/50 space-y-4">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="font-bold text-xs text-rose-900 flex items-center gap-2">
+                                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i> Supporting Certificate / Deed Proof
+                            </div>
+                            <span class="text-[11px] font-bold text-rose-700 block mt-1">Status: ⚠️ Needs Attention / Re-upload Required</span>
+                        </div>
+                        <span class="px-3 py-1 bg-rose-100 text-rose-800 text-[11px] font-black rounded-full border border-rose-300">
+                            Action Required
+                        </span>
+                    </div>
+
+                    <div class="p-3 bg-white rounded-lg border border-rose-100 text-xs space-y-1">
+                        <span class="font-bold text-rose-900">What is wrong?</span>
+                        <p class="text-slate-600 font-medium">Uploaded document page 2 seal or municipal endorsement is blurred and could not be verified automatically.</p>
+                    </div>
+
+                    <div class="p-3 bg-white rounded-lg border border-rose-100 text-xs space-y-1">
+                        <span class="font-bold text-slate-900">What should you do?</span>
+                        <p class="text-slate-600 font-medium">Please upload a clearer scanned copy of your certificate ensuring the authority seal and date are crisp.</p>
+                    </div>
+
+                    <div class="pt-2 flex flex-col sm:flex-row items-center gap-3">
+                        <input type="file" id="reuploadFileInput" class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-rose-100 file:text-rose-800 hover:file:bg-rose-200">
+                        <button type="button" onclick="performReupload()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-black shadow transition flex items-center gap-1.5">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Re-upload & Verify
+                        </button>
+                    </div>
+                </div>
+
+                <div id="reuploadSuccessCard" class="hidden p-4 rounded-xl border border-emerald-200 bg-emerald-50/60 flex items-center justify-between">
+                    <div class="space-y-1">
+                        <div class="font-bold text-xs text-slate-900 flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Supporting Certificate / Deed Proof (Re-uploaded)
+                        </div>
+                        <p class="text-[11px] text-emerald-800 font-medium">Corrected copy validated successfully. Zero pending document flags.</p>
+                    </div>
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-black rounded-full border border-emerald-300">
+                        ✅ Verified
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex justify-between pt-2">
+                <button type="button" onclick="goToStep(4)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
+                    ← Back
+                </button>
+                <button type="button" id="btnProceedToPayment" onclick="goToStep(6)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
+                    Proceed to Payment <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= STEP 6: PAYMENT & SUBMISSION (Spec §9 & §10) ================= -->
+        <div id="step-6" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 7: Government Fee Payment</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Payment & Application Finalization</h2>
+                <p class="text-xs text-slate-500">All required documents have been verified. Pay the applicable service fee to generate your tracking ID.</p>
+            </div>
+
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-2.5 text-xs">
+                    <span class="text-slate-500 font-medium">Selected Service:</span>
+                    <span class="font-bold text-slate-800" id="paymentServiceName">Senior Citizen Family Pension Sanction</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-slate-200 pb-2.5 text-xs">
+                    <span class="text-slate-500 font-medium">Government Sanction Fee:</span>
+                    <span class="font-bold text-slate-800" id="paymentGovFee">₹50.00</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-slate-200 pb-2.5 text-xs">
+                    <span class="text-slate-500 font-medium">DigiLocker Verification & Portal Processing:</span>
+                    <span class="font-black text-emerald-700">FREE (Gov Subsidized)</span>
+                </div>
+                <div class="flex justify-between items-center pt-1 text-base font-black text-slate-900">
+                    <span>Total Amount Payable:</span>
+                    <span class="text-orange-700" id="paymentTotal">₹50.00</span>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <label class="block text-xs font-bold text-slate-700">Select Payment Method</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <label class="cursor-pointer p-3 border-2 border-orange-500 bg-orange-50/50 rounded-xl flex items-center justify-center text-xs font-bold text-slate-800 gap-2">
+                        <input type="radio" name="payment_method" value="UPI" checked class="text-orange-600">
+                        UPI / QR Code
+                    </label>
+                    <label class="cursor-pointer p-3 border-2 border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center text-xs font-bold text-slate-800 gap-2">
+                        <input type="radio" name="payment_method" value="CARD" class="text-orange-600">
+                        Debit / Credit Card
+                    </label>
+                    <label class="cursor-pointer p-3 border-2 border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center text-xs font-bold text-slate-800 gap-2">
+                        <input type="radio" name="payment_method" value="NETBANKING" class="text-orange-600">
+                        Net Banking
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-between pt-2">
+                <button type="button" onclick="goToStep(5)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
+                    ← Back
+                </button>
+                <button type="submit" class="px-8 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-xl text-xs transition shadow-md flex items-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4"></i> Complete Payment & Submit Application
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    let currentStep = 1;
+    let selectedService = { id: 'SRV-PENSION-01', name: 'Senior Citizen Family Pension Sanction', fee: 50, sla: 14 };
+
+    function selectService(id, name, fee, sla) {
+        selectedService = { id, name, fee, sla };
+        document.getElementById('inputServiceId').value = id;
+        document.getElementById('paymentServiceName').textContent = name;
+        document.getElementById('paymentGovFee').textContent = fee === 0 ? 'FREE' : '₹' + fee + '.00';
+        document.getElementById('paymentTotal').textContent = fee === 0 ? 'FREE' : '₹' + fee + '.00';
+
+        document.querySelectorAll('.service-card').forEach(c => {
+            c.classList.remove('border-orange-500', 'bg-orange-50/50', 'ring-2', 'ring-orange-200');
+            c.classList.add('border-slate-200', 'bg-white');
+        });
+        const card = document.getElementById('service-card-' + id);
+        if (card) {
+            card.classList.add('border-orange-500', 'bg-orange-50/50', 'ring-2', 'ring-orange-200');
+        }
+    }
+
+    function goToStep(step) {
+        const nameVal = document.getElementById('wizardNameField').value;
+        const phoneVal = document.getElementById('wizardPhoneField').value;
+        document.getElementById('inputApplicantName').value = nameVal;
+        document.getElementById('inputApplicantPhone').value = phoneVal;
+
+        for (let i = 1; i <= 6; i++) {
+            const el = document.getElementById('step-' + i);
+            if (el) el.classList.add('hidden');
+            const badge = document.getElementById('step-badge-' + i);
+            if (badge) {
+                if (i <= step) {
+                    badge.classList.remove('bg-slate-200', 'text-slate-600');
+                    badge.classList.add('bg-orange-600', 'text-white');
+                } else {
+                    badge.classList.remove('bg-orange-600', 'text-white');
+                    badge.classList.add('bg-slate-200', 'text-slate-600');
+                }
+            }
+        }
+        document.getElementById('step-' + step).classList.remove('hidden');
+        currentStep = step;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function runDocumentCorrectnessCheck() {
+        goToStep(5);
+    }
+
+    function performReupload() {
+        document.getElementById('reuploadSection').classList.add('hidden');
+        document.getElementById('reuploadSuccessCard').classList.remove('hidden');
+        document.getElementById('inputHasReuploaded').value = 'true';
+    }
+</script>
+{% endblock %}

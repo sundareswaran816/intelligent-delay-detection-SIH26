@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}National File Verification Portal - Select Role{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8 py-4">
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white rounded-2xl p-8 shadow-md text-center space-y-3">
+        <span class="px-3.5 py-1 bg-white/20 text-white text-[11px] font-bold rounded-full uppercase tracking-wider">
+            National e-Governance Initiative • SIH 2026
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Welcome to Civiora File Intelligence Portal</h1>
+        <p class="text-orange-100 text-xs sm:text-sm max-w-xl mx-auto">
+            Please select your role to proceed to the secure authentication gateway.
+        </p>
+    </div>
+
+    <!-- Role Selection Grid (Specification §2) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Citizen Option -->
+        <a href="/login/citizen" class="group bg-white rounded-2xl p-8 border-2 border-slate-200 hover:border-orange-500 hover:shadow-xl transition flex flex-col justify-between space-y-6 text-left ring-0 hover:ring-4 hover:ring-orange-100">
+            <div class="space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-orange-50 group-hover:bg-orange-600 text-orange-600 group-hover:text-white flex items-center justify-center font-bold text-2xl transition shadow-sm">
+                    <i data-lucide="user" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 group-hover:text-orange-600 transition">Citizen</h2>
+                    <span class="text-xs text-orange-700 font-bold uppercase tracking-wider block mt-0.5">Public Services & Applications</span>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                    Apply for government services, pensions, deeds, certificates, verify KYC via DigiLocker, and track real-time AI delay predictions.
+                </p>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-orange-600">
+                <span>Citizen Mobile & OTP Login</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition"></i>
+            </div>
+        </a>
+
+        <!-- Officer Option -->
+        <a href="/login/officer" class="group bg-white rounded-2xl p-8 border-2 border-slate-200 hover:border-slate-800 hover:shadow-xl transition flex flex-col justify-between space-y-6 text-left ring-0 hover:ring-4 hover:ring-slate-100">
+            <div class="space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-slate-100 group-hover:bg-slate-900 text-slate-800 group-hover:text-white flex items-center justify-center font-bold text-2xl transition shadow-sm">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 group-hover:text-slate-800 transition">Government Officer</h2>
+                    <span class="text-xs text-slate-500 font-bold uppercase tracking-wider block mt-0.5">Departmental Processing</span>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                    Authorized access for Municipal, Pension, Revenue, and Education officers to review and sequentially advance assigned files.
+                </p>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-slate-800">
+                <span>Officer Secure Credentials Login</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition"></i>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

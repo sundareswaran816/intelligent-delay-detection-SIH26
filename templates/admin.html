@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Admin & Webhook Management - Team Civiora{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="webhook" class="text-cyan-600"></i> Webhook Trigger Engine & Audit Logs
+            </h1>
+            <p class="text-sm text-slate-500">Inspect real-time event dispatches to DigiLocker, SMS gateways, and secure audit traces.</p>
+        </div>
+
+        <!-- Manual Webhook Trigger Test -->
+        <form action="/admin/trigger-test-webhook" method="POST">
+            <button type="submit" class="px-4 py-2 bg-cyan-700 hover:bg-cyan-800 text-white rounded-lg text-xs font-semibold shadow flex items-center gap-2">
+                <i data-lucide="send" class="w-4 h-4"></i> Trigger Test Webhook Event
+            </button>
+        </form>
+    </div>
+
+    <!-- Webhook Architecture Highlights -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-2">
+            <div class="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider">
+                <i data-lucide="shield-check" class="w-4 h-4"></i> HMAC Payload Signatures
+            </div>
+            <p class="text-xs text-slate-300">All outbound event payloads are cryptographically signed using SHA-256 for secure gateway consumption.</p>
+        </div>
+
+        <div class="p-4 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-2">
+            <div class="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Automatic Retries & DLQ
+            </div>
+            <p class="text-xs text-slate-300">Exponential backoff with Dead Letter Queue ensures zero lost notifications during network fluctuations.</p>
+        </div>
+
+        <div class="p-4 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-2">
+            <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                <i data-lucide="database" class="w-4 h-4"></i> DigiLocker Storage Bridge
+            </div>
+            <p class="text-xs text-slate-300">Approved documents are seamlessly delivered to the citizen's DigiLocker document wallet automatically.</p>
+        </div>
+    </div>
+
+    <!-- Webhook Delivery Logs Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div>
+                <h2 class="text-base font-bold text-slate-900">Live Webhook Event Stream</h2>
+                <p class="text-xs text-slate-500">Real-time HTTP POST deliveries to subscribers (DigiLocker, SMS/WhatsApp Gateway, UMANG).</p>
+            </div>
+            <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+                Active Listeners: 3
+            </span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 font-bold text-slate-600 uppercase tracking-wider">
+                        <th class="p-3">Log ID</th>
+                        <th class="p-3">Timestamp</th>
+                        <th class="p-3">Event Type</th>
+                        <th class="p-3">Target Gateway</th>
+                        <th class="p-3">File Ref</th>
+                        <th class="p-3">HMAC Signature</th>
+                        <th class="p-3">Delivery Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-mono">
+                    {% for wh in webhook_logs %}
+                        <tr class="hover:bg-slate-50/70 transition">
+                            <td class="p-3 font-bold text-blue-600">{{ wh.id }}</td>
+                            <td class="p-3 text-slate-500">{{ wh.timestamp }}</td>
+                            <td class="p-3">
+                                <span class="px-2 py-0.5 rounded font-sans font-semibold bg-indigo-50 text-indigo-700">
+                                    {{ wh.event_type }}
+                                </span>
+                            </td>
+                            <td class="p-3 font-sans text-slate-800 font-medium">{{ wh.target }}</td>
+                            <td class="p-3 text-blue-700 font-bold">{{ wh.file_id }}</td>
+                            <td class="p-3 text-slate-400">{{ wh.signature }}</td>
+                            <td class="p-3 font-sans">
+                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px]">
+                                    {{ wh.status }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Immutable Audit Trail Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-6 border-b border-slate-100">
+            <h2 class="text-base font-bold text-slate-900">System Activity & Governance Audit Trail</h2>
+            <p class="text-xs text-slate-500">Every citizen submission, officer stage progression, and AI reallocation is logged.</p>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 font-bold text-slate-600 uppercase tracking-wider">
+                        <th class="p-3">Audit ID</th>
+                        <th class="p-3">Timestamp</th>
+                        <th class="p-3">Action</th>
+                        <th class="p-3">Performed By</th>
+                        <th class="p-3">File ID</th>
+                        <th class="p-3">Notes & Details</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for aud in audit_logs %}
+                        <tr class="hover:bg-slate-50/70 transition">
+                            <td class="p-3 font-mono font-bold text-slate-500">{{ aud.id }}</td>
+                            <td class="p-3 font-mono text-slate-400">{{ aud.timestamp }}</td>
+                            <td class="p-3 font-bold text-slate-800">{{ aud.action }}</td>
+                            <td class="p-3 text-slate-600 font-medium">{{ aud.performed_by }}</td>
+                            <td class="p-3 font-mono font-bold text-blue-600">{{ aud.file_id }}</td>
+                            <td class="p-3 text-slate-500">{{ aud.notes }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

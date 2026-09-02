@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Civiora - AI-Powered Government Workflow Intelligence{% endblock %}
+
+{% block content %}
+<div class="space-y-10">
+    <!-- Hero Banner -->
+    <div class="bg-gradient-to-r from-govblue-900 via-govblue-800 to-indigo-950 text-white rounded-2xl p-8 md:p-12 shadow-xl relative overflow-hidden">
+        <div class="relative z-10 max-w-3xl space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-400/20 text-amber-300 border border-amber-400/30 rounded-full text-xs font-semibold uppercase tracking-wider">
+                SIH 2026 Initiative • Smart Automation
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+                Intelligent Delay Detection in Government Service Delivery
+            </h1>
+            <p class="text-slate-300 text-base md:text-lg">
+                Moving governance from <span class="text-rose-400 font-semibold">Reactive Tracking</span> to <span class="text-emerald-400 font-semibold">Proactive AI Prediction</span> and timely human intervention.
+            </p>
+            <div class="pt-4 flex flex-wrap gap-4">
+                <a href="/citizen" class="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                    Citizen Service Portal <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                <a href="/officer" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition flex items-center gap-2">
+                    Officer Workload Desk <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                </a>
+                <a href="/dept-head" class="px-6 py-3 bg-indigo-600/50 hover:bg-indigo-600 text-white font-semibold rounded-xl border border-indigo-400/30 transition flex items-center gap-2">
+                    Department Analytics <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+        <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+            <i data-lucide="cpu" class="w-96 h-96"></i>
+        </div>
+    </div>
+
+    <!-- 3-Pillar Architecture Feature Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl mb-4">
+                1
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">DETECT</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                Continuous event-driven monitoring of government file queues across departments, flagging stalled or at-risk cases before SLA breaches.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-xl mb-4">
+                2
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">PREDICT</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                Machine Learning ensemble (XGBoost & Random Forest) estimates delay probability, calculates expected completion dates (ETA), and identifies exact bottleneck stages.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xl mb-4">
+                3
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">ACT</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                Secure HMAC webhooks dispatch automated notifications to DigiLocker, SMS/WhatsApp gateways, and officer task management queues for proactive intervention.
+            </p>
+        </div>
+    </div>
+
+    <!-- Core SIH Architecture Diagram Interactive Showcase -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900">End-to-End System Workflow</h2>
+                <p class="text-sm text-slate-500">Live interaction flow as per Team Civiora submission specification</p>
+            </div>
+            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                Interactive Architecture
+            </span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-3 text-center">
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                <i data-lucide="file-text" class="w-6 h-6 mx-auto text-blue-600 mb-2"></i>
+                <div class="font-bold text-xs text-slate-900">1. Request Submitted</div>
+                <div class="text-[11px] text-slate-500 mt-1">Citizen Portal / DigiLocker</div>
+            </div>
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                <i data-lucide="database" class="w-6 h-6 mx-auto text-indigo-600 mb-2"></i>
+                <div class="font-bold text-xs text-slate-900">2. Workflow Data</div>
+                <div class="text-[11px] text-slate-500 mt-1">Validation & Store</div>
+            </div>
+            <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                <i data-lucide="cpu" class="w-6 h-6 mx-auto text-amber-600 mb-2"></i>
+                <div class="font-bold text-xs text-amber-900">3. AI Delay Engine</div>
+                <div class="text-[11px] text-amber-700 mt-1">Feature Extraction</div>
+            </div>
+            <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                <i data-lucide="zap" class="w-6 h-6 mx-auto text-amber-600 mb-2"></i>
+                <div class="font-bold text-xs text-amber-900">4. Risk + ETA + Bottleneck</div>
+                <div class="text-[11px] text-amber-700 mt-1">Explainable Prediction</div>
+            </div>
+            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                <i data-lucide="send" class="w-6 h-6 mx-auto text-emerald-600 mb-2"></i>
+                <div class="font-bold text-xs text-emerald-900">5. Early Webhook</div>
+                <div class="text-[11px] text-emerald-700 mt-1">SMS / WhatsApp / DigiLocker</div>
+            </div>
+            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                <i data-lucide="check-circle" class="w-6 h-6 mx-auto text-emerald-600 mb-2"></i>
+                <div class="font-bold text-xs text-emerald-900">6. Timely Action</div>
+                <div class="text-[11px] text-emerald-700 mt-1">Zero SLA Breach</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

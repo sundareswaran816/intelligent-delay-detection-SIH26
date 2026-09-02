@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Citizen Authentication - Government Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto space-y-6 py-4">
+    <!-- Back link -->
+    <a href="/" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 transition">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Role Selection
+    </a>
+
+    <div class="bg-white rounded-2xl p-7 border-2 border-orange-500 shadow-xl ring-4 ring-orange-100/70 space-y-6">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center font-bold">
+                <i data-lucide="user-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-black text-slate-900">Citizen Sign In</h2>
+                <span class="text-xs text-orange-700 font-bold">Mobile Number & OTP Gateway</span>
+            </div>
+        </div>
+
+        {% if error %}
+            <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-bold text-rose-700 flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i> {{ error }}
+            </div>
+        {% endif %}
+
+        {% if not otp_sent %}
+            <!-- Stage 1: Enter Phone Number -->
+            <form action="/auth/citizen/send-otp" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Enter Registered Mobile Number</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">+91</span>
+                        <input type="tel" name="mobile_number" required placeholder="9876543210" value="9876543210" maxlength="10"
+                               class="w-full pl-10 pr-3 py-2.5 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none font-mono">
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1 font-medium">An SMS with a 6-digit OTP will be dispatched to this number.</p>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> Request One-Time Password (OTP)
+                </button>
+            </form>
+        {% else %}
+            <!-- Stage 2: Submit OTP -->
+            <form action="/auth/citizen/verify-otp" method="POST" class="space-y-4">
+                <input type="hidden" name="mobile_number" value="{{ mobile_number }}">
+
+                <div class="p-3 bg-orange-50 border border-orange-200 rounded-xl text-xs flex justify-between items-center">
+                    <div>
+                        <span class="text-slate-500 block">OTP Sent to:</span>
+                        <strong class="text-slate-900 font-mono font-bold">+91 {{ mobile_number }}</strong>
+                    </div>
+                    <a href="/login/citizen" class="text-orange-700 font-bold hover:underline text-[11px]">Change Number</a>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Enter 6-Digit OTP</label>
+                        <span class="text-[11px] text-emerald-800 font-black bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Demo Code: {{ demo_otp }}</span>
+                    </div>
+                    <input type="text" name="otp" required maxlength="6" value="{{ demo_otp }}" placeholder="123456" autofocus
+                           class="w-full px-3 py-2.5 text-sm font-black border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none font-mono tracking-widest text-center">
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4"></i> Validate OTP & Access Citizen Portal
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
