@@ -43,6 +43,22 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px -5px rgba(0, 33, 71, 0.12);
         }
+        /* Accessibility Font Scaling */
+        html.font-scale-sm {
+            font-size: 14px !important;
+        }
+        html.font-scale-md {
+            font-size: 16px !important;
+        }
+        html.font-scale-lg {
+            font-size: 18.5px !important;
+        }
+        /* Hidden Google Translate Banner */
+        .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
+        body { top: 0px !important; }
+        .goog-tooltip { display: none !important; }
+        .goog-tooltip:hover { display: none !important; }
+        .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
     </style>
 </head>
 <body class="bg-[#f0f4f8] text-slate-800 font-sans min-h-screen flex flex-col antialiased">
@@ -60,14 +76,14 @@
                         🏛️
                     </div>
                     <div>
-                        <div class="text-[11px] uppercase tracking-widest text-slate-300 font-bold flex items-center gap-1.5">
+                        <div class="text-[11px] uppercase tracking-widest text-slate-300 font-bold flex items-center gap-1.5" data-i18n="gov_india_header">
                             <span>भारत सरकार</span>
                             <span class="text-slate-400">•</span>
                             <span>GOVERNMENT OF INDIA</span>
                         </div>
                         <a href="/" class="text-base sm:text-lg font-black tracking-tight text-white hover:text-amber-300 transition flex items-center gap-2">
                             <span>CIVIORA</span>
-                            <span class="text-[11px] font-bold px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-400/30 rounded">
+                            <span class="text-[11px] font-bold px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-400/30 rounded" data-i18n="portal_sub">
                                 National File Workflow & Delay Prevention
                             </span>
                         </a>
@@ -76,64 +92,75 @@
 
                 <!-- Center: Slogan -->
                 <div class="hidden lg:block text-center text-xs">
-                    <div class="font-bold text-white tracking-wide">Most Used Indian Government Services Portal</div>
-                    <div class="text-[11px] text-slate-300 font-medium">Apply • Check Status • Access Services • Prevent Delays</div>
+                    <div class="font-bold text-white tracking-wide" data-i18n="slogan_title">Most Used Indian Government Services Portal</div>
+                    <div class="text-[11px] text-slate-300 font-medium" data-i18n="slogan_sub">Apply • Check Status • Access Services • Prevent Delays</div>
                 </div>
 
-                <!-- Right: Digital India & Quick Controls -->
+                <!-- Right: Digital India & Accessibility Controls (A- / A / A+ & Language Switcher) -->
                 <div class="flex items-center gap-3">
                     <div class="hidden sm:flex flex-col text-right">
                         <span class="text-[11px] font-bold text-amber-400 flex items-center justify-end gap-1">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Digital India
                         </span>
-                        <span class="text-[10px] text-slate-300">for a Better Tomorrow</span>
+                        <span class="text-[10px] text-slate-300" data-i18n="digital_india_sub">for a Better Tomorrow</span>
                     </div>
                     <div class="h-6 w-px bg-white/20 hidden sm:block"></div>
-                    <div class="flex items-center gap-1.5 text-xs text-slate-200">
-                        <span class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-bold hover:bg-white/20 cursor-pointer">A-</span>
-                        <span class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-bold hover:bg-white/20 cursor-pointer">A</span>
-                        <span class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-bold hover:bg-white/20 cursor-pointer">A+</span>
-                        <span class="px-2 py-0.5 bg-amber-500 text-slate-900 rounded font-black text-[10px] ml-1">English / हिंदी</span>
+
+                    <!-- FONT SIZE CONTROLS (A- / A / A+) -->
+                    <div class="flex items-center gap-1 text-xs text-slate-200">
+                        <button type="button" onclick="setFontScale('sm')" title="Decrease Font Size" id="btnFontSm"
+                                class="px-2 py-1 bg-white/10 hover:bg-white/25 rounded text-[11px] font-bold transition">A-</button>
+                        <button type="button" onclick="setFontScale('md')" title="Normal Font Size" id="btnFontMd"
+                                class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded text-[11px] font-black text-amber-300 transition">A</button>
+                        <button type="button" onclick="setFontScale('lg')" title="Increase Font Size" id="btnFontLg"
+                                class="px-2 py-1 bg-white/10 hover:bg-white/25 rounded text-[11px] font-bold transition">A+</button>
+                    </div>
+
+                    <!-- LANGUAGE SELECTOR (English / हिंदी / தமிழ்) -->
+                    <div class="relative">
+                        <select id="langSelector" onchange="changeLanguage(this.value)" 
+                                class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg font-black text-xs cursor-pointer shadow focus:outline-none transition">
+                            <option value="en">English</option>
+                            <option value="hi">हिंदी (Hindi)</option>
+                            <option value="ta">தமிழ் (Tamil)</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Secondary Navigation Bar (Deep Government Blue #004080) -->
+        <!-- 2. Clean Secondary Navigation Bar (Removed Red-Circled Items As Requested) -->
         <div class="bg-[#004080] text-white text-xs font-bold border-b border-[#002d5c]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto py-1.5">
-                <nav class="flex items-center space-x-1 sm:space-x-2 shrink-0">
-                    <a href="/" class="px-3 py-1.5 rounded hover:bg-[#003366] text-white flex items-center gap-1.5 transition">
-                        <i data-lucide="home" class="w-3.5 h-3.5"></i> Home
-                    </a>
-                    <a href="/citizen" class="px-3 py-1.5 rounded hover:bg-[#003366] text-slate-100 flex items-center gap-1.5 transition">
-                        <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-amber-300"></i> Citizen Services
-                    </a>
-                    <a href="/citizen/wizard" class="px-3 py-1.5 rounded bg-[#FF6F00] hover:bg-[#e65c00] text-white flex items-center gap-1.5 transition shadow-sm">
-                        <i data-lucide="file-plus" class="w-3.5 h-3.5"></i> Apply for Service
-                    </a>
-                    <a href="/officer" class="px-3 py-1.5 rounded hover:bg-[#003366] text-slate-100 flex items-center gap-1.5 transition">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> Officer Desk
-                    </a>
-                    <a href="/dept-head" class="px-3 py-1.5 rounded hover:bg-[#003366] text-slate-100 flex items-center gap-1.5 transition">
-                        <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> SLA & Bottlenecks
-                    </a>
-                    <a href="/admin" class="px-3 py-1.5 rounded hover:bg-[#003366] text-slate-100 flex items-center gap-1.5 transition">
-                        <i data-lucide="webhook" class="w-3.5 h-3.5"></i> Webhook Audit
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-2">
+                <!-- Left Nav: Home -->
+                <nav class="flex items-center space-x-2">
+                    <a href="/" class="px-3.5 py-1.5 rounded-lg hover:bg-[#003366] text-white flex items-center gap-1.5 transition">
+                        <i data-lucide="home" class="w-4 h-4"></i> <span data-i18n="nav_home">Home</span>
                     </a>
                 </nav>
 
-                <div class="flex items-center gap-2 pl-4 shrink-0">
-                    {% if user_role %}
-                        <a href="/logout" class="px-3 py-1 rounded bg-rose-700/80 hover:bg-rose-800 text-white font-bold flex items-center gap-1 text-[11px] transition">
-                            <i data-lucide="log-out" class="w-3 h-3"></i> Logout
+                <!-- Right Nav: Clean Sign-in Buttons / Role Status -->
+                <div class="flex items-center gap-2">
+                    {% if user_role == 'citizen' %}
+                        <span class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
+                            <i data-lucide="user" class="w-3.5 h-3.5"></i> Citizen Session Active
+                        </span>
+                        <a href="/logout" class="px-3 py-1 rounded-lg bg-rose-700 hover:bg-rose-800 text-white font-bold flex items-center gap-1 text-xs transition">
+                            <i data-lucide="log-out" class="w-3 h-3"></i> <span data-i18n="nav_logout">Logout</span>
+                        </a>
+                    {% elif user_role == 'officer' %}
+                        <span class="text-[11px] font-bold text-emerald-300 flex items-center gap-1">
+                            <i data-lucide="shield" class="w-3.5 h-3.5"></i> Officer Desk Active
+                        </span>
+                        <a href="/logout" class="px-3 py-1 rounded-lg bg-rose-700 hover:bg-rose-800 text-white font-bold flex items-center gap-1 text-xs transition">
+                            <i data-lucide="log-out" class="w-3 h-3"></i> <span data-i18n="nav_logout">Logout</span>
                         </a>
                     {% else %}
-                        <a href="/login/citizen" class="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px]">
-                            Citizen Login
+                        <a href="/login/citizen" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition flex items-center gap-1">
+                            <i data-lucide="user" class="w-3.5 h-3.5 text-amber-300"></i> <span data-i18n="nav_citizen_login">Citizen Login</span>
                         </a>
-                        <a href="/login/officer" class="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px]">
-                            Officer Login
+                        <a href="/login/officer" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition flex items-center gap-1">
+                            <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-400"></i> <span data-i18n="nav_officer_login">Officer Login</span>
                         </a>
                     {% endif %}
                 </div>
@@ -151,27 +178,27 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs border-b border-[#003366] pb-6">
                 <div class="space-y-2">
-                    <div class="font-black text-sm text-white flex items-center gap-2">
+                    <div class="font-black text-sm text-white flex items-center gap-2" data-i18n="footer_gov_title">
                         🏛️ Government of India
                     </div>
-                    <p class="text-slate-300 leading-relaxed">
+                    <p class="text-slate-300 leading-relaxed" data-i18n="footer_gov_sub">
                         Ministry of Personnel, Public Grievances and Pensions • National E-Governance Division (NeGD)
                     </p>
                     <div class="font-mono text-[11px] text-amber-400">SIH 2026 Innovation Initiative</div>
                 </div>
 
                 <div class="space-y-1.5">
-                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Quick Portals</div>
+                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]" data-i18n="footer_quick_portals">Quick Portals</div>
                     <ul class="space-y-1 text-slate-300">
-                        <li><a href="/citizen" class="hover:text-amber-300">Citizen Application Tracking</a></li>
-                        <li><a href="/citizen/wizard" class="hover:text-amber-300">Apply for Government Schemes</a></li>
-                        <li><a href="/officer" class="hover:text-amber-300">Officer Document Scrutiny Desk</a></li>
-                        <li><a href="/dept-head" class="hover:text-amber-300">AI Delay Analytics & SLA Dashboard</a></li>
+                        <li><a href="/citizen" class="hover:text-amber-300" data-i18n="footer_track">Citizen Application Tracking</a></li>
+                        <li><a href="/citizen/wizard" class="hover:text-amber-300" data-i18n="footer_apply">Apply for Government Schemes</a></li>
+                        <li><a href="/officer" class="hover:text-amber-300" data-i18n="footer_officer">Officer Document Scrutiny Desk</a></li>
+                        <li><a href="/dept-head" class="hover:text-amber-300" data-i18n="footer_sla">AI Delay Analytics & SLA Dashboard</a></li>
                     </ul>
                 </div>
 
                 <div class="space-y-1.5">
-                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Integrated Gateways</div>
+                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]" data-i18n="footer_gateways">Integrated Gateways</div>
                     <ul class="space-y-1 text-slate-300">
                         <li><span>DigiLocker Verification Bridge</span></li>
                         <li><span>UIDAI Aadhaar e-KYC Service</span></li>
@@ -181,8 +208,8 @@
                 </div>
 
                 <div class="space-y-2">
-                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Compliance & Standards</div>
-                    <p class="text-slate-400 leading-relaxed text-[11px]">
+                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]" data-i18n="footer_compliance">Compliance & Standards</div>
+                    <p class="text-slate-400 leading-relaxed text-[11px]" data-i18n="footer_compliance_sub">
                         Built under Section 6A of the Information Technology Act. Cryptographic DSC e-Sign 2.0 & SHA256 audit trails.
                     </p>
                     <div class="flex items-center gap-2 text-[10px] text-emerald-400 font-bold">
@@ -196,20 +223,166 @@
                     Designed & Developed for <strong class="text-white">Smart India Hackathon (SIH 2026)</strong> • Problem Statement #26
                 </div>
                 <div class="flex items-center gap-4 text-[11px]">
-                    <span class="hover:text-white cursor-pointer">Privacy Policy</span>
+                    <span class="hover:text-white cursor-pointer" data-i18n="footer_privacy">Privacy Policy</span>
                     <span>|</span>
-                    <span class="hover:text-white cursor-pointer">Terms of Service</span>
+                    <span class="hover:text-white cursor-pointer" data-i18n="footer_terms">Terms of Service</span>
                     <span>|</span>
-                    <span class="hover:text-white cursor-pointer">Hyperlinking Policy</span>
-                    <span>|</span>
-                    <span class="hover:text-white cursor-pointer">Helpdesk</span>
+                    <span class="hover:text-white cursor-pointer" data-i18n="footer_help">Helpdesk</span>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- CLIENT SCRIPT: FONT SCALING & LANGUAGE TRANSLATION (English / Hindi / Tamil) -->
     <script>
-        if (window.lucide) lucide.createIcons();
+        // 1. FONT SIZE SCALING
+        function setFontScale(scale) {
+            document.documentElement.classList.remove('font-scale-sm', 'font-scale-md', 'font-scale-lg');
+            document.documentElement.classList.add('font-scale-' + scale);
+            localStorage.setItem('civiora_font_scale', scale);
+            
+            // Highlight active button
+            ['sm', 'md', 'lg'].forEach(s => {
+                const btn = document.getElementById('btnFont' + s.charAt(0).toUpperCase() + s.slice(1));
+                if (btn) {
+                    if (s === scale) {
+                        btn.className = "px-2 py-1 bg-white/30 rounded text-[11px] font-black text-amber-300 transition";
+                    } else {
+                        btn.className = "px-2 py-1 bg-white/10 hover:bg-white/25 rounded text-[11px] font-bold transition";
+                    }
+                }
+            });
+        }
+
+        // 2. MULTI-LANGUAGE TRANSLATION DICTIONARY (English / Hindi / Tamil)
+        const TRANSLATIONS = {
+            hi: {
+                gov_india_header: "<span>भारत सरकार</span> <span>•</span> <span>GOVERNMENT OF INDIA</span>",
+                portal_sub: "राष्ट्रीय फ़ाइल कार्यप्रवाह एवं विलंब रोकथाम प्रणाली",
+                slogan_title: "सर्वाधिक प्रयुक्त भारतीय सरकारी सेवा पोर्टल",
+                slogan_sub: "आवेदन करें • स्थिति जांचें • सेवाएं प्राप्त करें • विलंब रोकें",
+                digital_india_sub: "एक बेहतर कल के लिए",
+                nav_home: "होम (मुख्य पृष्ठ)",
+                nav_logout: "लॉग आउट",
+                nav_citizen_login: "नागरिक लॉगिन",
+                nav_officer_login: "अधिकारी लॉगिन",
+                footer_gov_title: "🏛️ भारत सरकार",
+                footer_gov_sub: "कार्मिक, लोक शिकायत एवं पेंशन मंत्रालय • राष्ट्रीय ई-गवर्नेंस प्रभाग (NeGD)",
+                footer_quick_portals: "त्वरित पोर्टल",
+                footer_track: "नागरिक आवेदन ट्रैकिंग",
+                footer_apply: "सरकारी योजनाओं के लिए आवेदन करें",
+                footer_officer: "अधिकारी दस्तावेज़ संवीक्षा डेस्क",
+                footer_sla: "एआई विलंब विश्लेषण एवं एसएलए डैशबोर्ड",
+                footer_gateways: "एकीकृत गेटवे",
+                footer_compliance: "अनुपालन एवं मानक",
+                footer_compliance_sub: "सूचना प्रौद्योगिकी अधिनियम की धारा 6ए के तहत निर्मित। क्रिप्टोग्राफ़िक डीएससी ई-साइन 2.0।",
+                footer_privacy: "गोपनीयता नीति",
+                footer_terms: "उपयोग की शर्तें",
+                footer_help: "हेल्पडेस्क"
+            },
+            ta: {
+                gov_india_header: "<span>இந்திய அரசு</span> <span>•</span> <span>GOVERNMENT OF INDIA</span>",
+                portal_sub: "தேசிய கோப்பு பணிப்பாய்வு மற்றும் தாமத தடுப்பு அமைப்பு",
+                slogan_title: "அதிகம் பயன்படுத்தப்படும் இந்திய அரசு சேவைகள் போர்டல்",
+                slogan_sub: "விண்ணப்பிக்கவும் • நிலையை அறியவும் • சேவைகளைப் பெறவும்",
+                digital_india_sub: "சிறந்த நாளைய விடியலுக்காக",
+                nav_home: "முகப்பு",
+                nav_logout: "வெளியேறு",
+                nav_citizen_login: "குடிமக்கள் உள்நுழைவு",
+                nav_officer_login: "அதிகாரி உள்நுழைவு",
+                footer_gov_title: "🏛️ இந்திய அரசு",
+                footer_gov_sub: "பணியாளர்கள், பொது குறைகள் மற்றும் ஓய்வூதியங்கள் அமைச்சகம் • தேசிய மின் ஆளுமை பிரிவு (NeGD)",
+                footer_quick_portals: "விரைவு போர்ட்டல்கள்",
+                footer_track: "குடிமக்கள் விண்ணப்ப நிலை கண்காணிப்பு",
+                footer_apply: "அரசு சேவைகளுக்கு விண்ணப்பிக்கவும்",
+                footer_officer: "அதிகாரி ஆவண சரிபார்ப்பு மேசை",
+                footer_sla: "ஏஐ தாமத பகுப்பாய்வு மற்றும் எஸ்.எல்.ஏ டாஷ்போர்டு",
+                footer_gateways: "ஒருங்கிணைந்த நுழைவாயில்கள்",
+                footer_compliance: "இணக்கம் & தரநிலைகள்",
+                footer_compliance_sub: "தகவல் தொழில்நுட்ப சட்டம் பிரிவு 6A கீழ் உருவாக்கப்பட்டது. கிரிப்டோகிராஃபிக் DSC e-Sign 2.0.",
+                footer_privacy: "தனியுரிமை கொள்கை",
+                footer_terms: "பயன்பாட்டு விதிமுறைகள்",
+                footer_help: "உதவி மையம்"
+            },
+            en: {
+                gov_india_header: "<span>भारत सरकार</span> <span>•</span> <span>GOVERNMENT OF INDIA</span>",
+                portal_sub: "National File Workflow & Delay Prevention",
+                slogan_title: "Most Used Indian Government Services Portal",
+                slogan_sub: "Apply • Check Status • Access Services • Prevent Delays",
+                digital_india_sub: "for a Better Tomorrow",
+                nav_home: "Home",
+                nav_logout: "Logout",
+                nav_citizen_login: "Citizen Login",
+                nav_officer_login: "Officer Login",
+                footer_gov_title: "🏛️ Government of India",
+                footer_gov_sub: "Ministry of Personnel, Public Grievances and Pensions • National E-Governance Division (NeGD)",
+                footer_quick_portals: "Quick Portals",
+                footer_track: "Citizen Application Tracking",
+                footer_apply: "Apply for Government Schemes",
+                footer_officer: "Officer Document Scrutiny Desk",
+                footer_sla: "AI Delay Analytics & SLA Dashboard",
+                footer_gateways: "Integrated Gateways",
+                footer_compliance: "Compliance & Standards",
+                footer_compliance_sub: "Built under Section 6A of the Information Technology Act. Cryptographic DSC e-Sign 2.0 & SHA256 audit trails.",
+                footer_privacy: "Privacy Policy",
+                footer_terms: "Terms of Service",
+                footer_help: "Helpdesk"
+            }
+        };
+
+        function changeLanguage(lang) {
+            localStorage.setItem('civiora_lang', lang);
+            const selector = document.getElementById('langSelector');
+            if (selector) selector.value = lang;
+
+            // Apply dictionary translations
+            const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key]) {
+                    el.innerHTML = dict[key];
+                }
+            });
+
+            // Trigger Google Translate for broad page content if non-English
+            if (window.google && window.google.translate) {
+                const combo = document.querySelector('.goog-te-combo');
+                if (combo) {
+                    combo.value = lang;
+                    combo.dispatchEvent(new Event('change'));
+                }
+            }
+        }
+
+        // Initialize settings on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Font Scale
+            const savedScale = localStorage.getItem('civiora_font_scale') || 'md';
+            setFontScale(savedScale);
+
+            // Language
+            const savedLang = localStorage.getItem('civiora_lang') || 'en';
+            const selector = document.getElementById('langSelector');
+            if (selector) selector.value = savedLang;
+            if (savedLang !== 'en') {
+                changeLanguage(savedLang);
+            }
+
+            if (window.lucide) lucide.createIcons();
+        });
     </script>
+
+    <!-- GOOGLE TRANSLATE ENGINE FOR FULL DYNAMIC PAGE TRANSLATION -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,hi,ta',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
