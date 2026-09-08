@@ -1,0 +1,48 @@
+==============================================================================
+CIVIORA - National Workflow & Intelligent Delay Prevention Portal
+Smart India Hackathon (SIH 2026) - Problem Statement #26
+==============================================================================
+
+HOW TO RUN ON ANY PC (1-CLICK SETUP):
+------------------------------------------------------------------------------
+1. Ensure Python 3.10+ is installed on the PC (from https://www.python.org).
+   Make sure "Add Python to PATH" is checked during installation.
+
+2. Simply DOUBLE CLICK the file:
+   👉 START_PROJECT.bat
+
+3. The script will automatically:
+   - Install all required packages (fastapi, uvicorn, jinja2, python-multipart)
+   - Start the local web server on port 8000
+   - Automatically open the portal in your default web browser at:
+     http://127.0.0.1:8000
+
+------------------------------------------------------------------------------
+DEMO CREDENTIALS FOR SIH JURY PRESENTATION:
+------------------------------------------------------------------------------
+- Citizen Login:
+  Mobile: Any 10-digit number (e.g. 9876543210)
+  OTP: 123456
+
+- Officer Login:
+  1. Senior Pension Officer (Pension Dept):
+     Officer ID: OFF-101
+     Password:   gov@2026
+     DSC PIN:    gov@esign2026
+
+  2. Tahsildar & Mutation Officer (Revenue Dept):
+     Officer ID: OFF-102
+     Password:   gov@2026
+     DSC PIN:    gov@esign2026
+
+  3. Chief Sanctioning Authority (Municipal Dept):
+     Officer ID: OFF-103
+     Password:   gov@2026
+     DSC PIN:    gov@esign2026
+
+  4. Director of Higher Education (Education Dept):
+     Officer ID: OFF-104
+     Password:   gov@2026
+     DSC PIN:    gov@esign2026
+
+==============================================================================
