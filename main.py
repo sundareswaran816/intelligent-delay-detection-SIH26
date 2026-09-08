@@ -114,6 +114,12 @@ async def citizen_portal(request: Request, search_id: str = None):
     elif files:
         selected_file = files[0]
     
+    if "grievances" not in DATABASE:
+        DATABASE["grievances"] = []
+    
+    grievance_success = request.query_params.get("grievance_success")
+    initial_tab = request.query_params.get("tab", "applications")
+
     return templates.TemplateResponse(
         request=request,
         name="citizen.html",
@@ -124,7 +130,10 @@ async def citizen_portal(request: Request, search_id: str = None):
             "selected_file": selected_file,
             "search_id": search_id or (selected_file["id"] if selected_file else ""),
             "departments": DATABASE["departments"],
-            "stages": STAGES
+            "stages": STAGES,
+            "grievances": DATABASE.get("grievances", []),
+            "grievance_success": bool(grievance_success),
+            "initial_tab": initial_tab
         }
     )
 
@@ -410,3 +419,50 @@ async def admin_dashboard(request: Request):
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+
+# ================= CITIZEN GRIEVANCE REDRESSAL (CPGRAMS / Feedback) =================
+@app.post("/citizen/lodge-grievance")
+async def citizen_lodge_grievance(
+    citizen_name: str = Form(...),
+    citizen_phone: str = Form(...),
+    department: str = Form("GENERAL"),
+    file_id: str = Form(""),
+    category: str = Form("Processing Delay / SLA Concern"),
+    priority: str = Form("HIGH"),
+    description: str = Form(...)
+):
+    if "grievances" not in DATABASE:
+        DATABASE["grievances"] = []
+    
+    grievance_id = f"CPGRAMS-2026-{random.randint(1000, 9999)}"
+    
+    matched_file = None
+    if file_id and file_id.strip():
+        clean_fid = file_id.strip().upper()
+        matched_file = next((f for f in DATABASE["files"] if f["id"].upper() == clean_fid), None)
+        if matched_file:
+            matched_file["is_grievance_escalated"] = True
+            if "delay_guidance" in matched_file:
+                matched_file["delay_guidance"]["delay_reason"] = f"Citizen Grievance #{grievance_id} registered. Escalated to Department Head."
+                matched_file["delay_guidance"]["next_step"] = "Immediate supervisory review & fast-track clearance."
+    
+    new_grievance = {
+        "id": grievance_id,
+        "citizen_name": citizen_name.strip(),
+        "citizen_phone": citizen_phone.strip(),
+        "file_id": file_id.strip().upper() if file_id else "GENERAL",
+        "service_name": matched_file["service_name"] if matched_file else f"{department} Public Service",
+        "department": department.upper(),
+        "category": category,
+        "priority": priority.upper(),
+        "description": description.strip(),
+        "status": "ESCALATED_TO_DEPT_HEAD",
+        "timestamp": datetime.now().strftime("%d %b %Y, %I:%M %p"),
+        "officer_action": "Grievance dispatched to Department Head & Central Monitoring System."
+    }
+    
+    DATABASE["grievances"].insert(0, new_grievance)
+    log_audit("GRIEVANCE_LODGED", f"Citizen: {citizen_name} ({citizen_phone})", grievance_id, f"Grievance lodged for {department}: {category}")
+    trigger_webhook_event("GRIEVANCE_ESCALATED", {"id": grievance_id, "file_id": file_id}, f"Citizen grievance {grievance_id} logged. Urgency: {priority}")
+    
+    return RedirectResponse(url="/citizen?tab=grievances&grievance_success=true", status_code=303)

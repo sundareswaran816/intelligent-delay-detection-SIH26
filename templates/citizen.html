@@ -16,9 +16,14 @@
                     <p class="text-xs text-slate-500">Enter your application reference number to view real-time stage progress and delay predictions.</p>
                 </div>
             </div>
-            <a href="/citizen/wizard" class="px-4 py-2 bg-[#FF6F00] hover:bg-[#e65c00] text-white text-xs font-black rounded-xl shadow transition flex items-center gap-1.5">
-                <i data-lucide="file-plus" class="w-4 h-4"></i> New Service Application
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="openGrievanceModal()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-black rounded-xl shadow transition flex items-center gap-1.5">
+                    <i data-lucide="message-square-warning" class="w-4 h-4"></i> Lodge Grievance / Report Difficulty
+                </button>
+                <a href="/citizen/wizard" class="px-4 py-2 bg-[#FF6F00] hover:bg-[#e65c00] text-white text-xs font-black rounded-xl shadow transition flex items-center gap-1.5">
+                    <i data-lucide="file-plus" class="w-4 h-4"></i> New Service Application
+                </a>
+            </div>
         </div>
 
         <form action="/citizen" method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-1">
@@ -42,13 +47,16 @@
         </form>
     </div>
 
-    <!-- TABS BAR (Active Applications vs E-Signed Certificates) -->
-    <div class="flex border-b-2 border-slate-200 gap-2">
-        <button onclick="switchTab('applications')" id="tabBtnApps" class="px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl">
+    <!-- TABS BAR (Active Applications vs E-Signed Certificates vs Grievances) -->
+    <div class="flex border-b-2 border-slate-200 gap-2 overflow-x-auto">
+        <button onclick="switchTab('applications')" id="tabBtnApps" class="px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl shrink-0">
             <i data-lucide="folder" class="w-4 h-4"></i> Active Applications ({{ files|length }})
         </button>
-        <button onclick="switchTab('certificates')" id="tabBtnCerts" class="px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition">
+        <button onclick="switchTab('certificates')" id="tabBtnCerts" class="px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition shrink-0">
             <i data-lucide="award" class="w-4 h-4 text-emerald-600"></i> Issued Certificates Hub ({{ completed_files|length }})
+        </button>
+        <button onclick="switchTab('grievances')" id="tabBtnGrievances" class="px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition shrink-0">
+            <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-600"></i> Grievances & Feedback (CPGRAMS) ({{ grievances|length }})
         </button>
     </div>
 
@@ -243,20 +251,217 @@
     </div>
 </div>
 
+
+    <!-- TAB 3: GRIEVANCES & FEEDBACK (CPGRAMS) -->
+    <div id="tabContentGrievances" class="hidden space-y-4">
+        {% if grievance_success %}
+            <div class="p-4 bg-emerald-50 border-2 border-emerald-300 rounded-2xl flex items-center justify-between text-xs text-emerald-900 font-bold">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+                    <span>Your grievance / feedback has been registered and escalated to the Department Head with Priority SLA.</span>
+                </div>
+                <span class="text-emerald-800 font-mono">CPGRAMS-DISPATCHED</span>
+            </div>
+        {% endif %}
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                <div>
+                    <h2 class="text-base font-black text-[#002147] flex items-center gap-2">
+                        <i data-lucide="shield-alert" class="w-5 h-5 text-rose-600"></i> Citizen Grievance Redressal & Feedback Dashboard
+                    </h2>
+                    <p class="text-xs text-slate-500">Track status of delays, application difficulties, or service feedback submitted to departmental authorities.</p>
+                </div>
+                <button type="button" onclick="openGrievanceModal()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow flex items-center gap-1.5">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Lodge New Grievance
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                {% for g in grievances %}
+                    <div class="p-4 bg-slate-50 hover:bg-white rounded-2xl border border-slate-200 space-y-3 transition shadow-sm">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono font-black text-xs text-rose-800 bg-rose-50 px-2.5 py-0.5 rounded border border-rose-200">{{ g.id }}</span>
+                                    <span class="px-2 py-0.5 bg-slate-200 text-slate-800 text-[10px] font-bold rounded">{{ g.department }}</span>
+                                    <span class="px-2 py-0.5 {% if g.priority == 'URGENT' %}bg-rose-100 text-rose-800 border-rose-300{% else %}bg-amber-100 text-amber-800 border-amber-300{% endif %} text-[10px] font-black rounded border">
+                                        {{ g.priority }} PRIORITY
+                                    </span>
+                                </div>
+                                <h3 class="font-black text-sm text-slate-900">{{ g.category }}</h3>
+                                <div class="text-xs text-slate-500">
+                                    Citizen: <strong class="text-slate-800">{{ g.citizen_name }}</strong> • Contact: <span class="font-mono text-slate-700 font-bold">+91 {{ g.citizen_phone }}</span>
+                                    {% if g.file_id and g.file_id != 'GENERAL' %}
+                                        • File Ref: <strong class="font-mono text-blue-700">{{ g.file_id }}</strong>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="text-right">
+                                <span class="px-3 py-1 bg-amber-100 text-amber-900 text-xs font-black rounded-full border border-amber-300 inline-block">
+                                    ● {{ g.status.replace('_', ' ') }}
+                                </span>
+                                <span class="block text-[10px] text-slate-400 mt-1 font-mono">{{ g.timestamp }}</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                            <span class="font-bold text-slate-500 block text-[10px] uppercase">Grievance Description / Feedback:</span>
+                            <p class="leading-relaxed">{{ g.description }}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                            <span class="flex items-center gap-1 text-blue-700 font-semibold">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> {{ g.officer_action }}
+                            </span>
+                            <span class="text-emerald-700 font-bold">✓ Central CPGRAMS Logged</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="p-10 text-center text-slate-400 text-xs space-y-2">
+                        <i data-lucide="message-square" class="w-10 h-10 mx-auto text-slate-300"></i>
+                        <div>No grievances lodged yet. Click "Lodge Grievance" above to submit any difficulties or feedback.</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: LODGE CITIZEN GRIEVANCE & DIFFICULTY FORM -->
+    <div id="grievanceModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 space-y-5 shadow-2xl border-2 border-rose-500 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-slate-900">Lodge Grievance & Difficulty Report</h3>
+                        <p class="text-xs text-slate-500">Submit delays, difficulties faced, or reviews directly to the Department Head.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeGrievanceModal()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">✕</button>
+            </div>
+
+            <form action="/citizen/lodge-grievance" method="POST" class="space-y-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block font-black text-slate-800 mb-1">Citizen Full Name *</label>
+                        <input type="text" name="citizen_name" required placeholder="Enter your full name"
+                               value="{% if selected_file %}{{ selected_file.applicant_name }}{% endif %}"
+                               class="w-full px-3.5 py-2.5 font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-black text-slate-800 mb-1">Contact Phone / WhatsApp *</label>
+                        <input type="tel" name="citizen_phone" required placeholder="10-digit mobile number"
+                               value="{% if selected_file %}{{ selected_file.applicant_phone }}{% else %}9876543210{% endif %}"
+                               class="w-full px-3.5 py-2.5 font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none font-mono">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block font-black text-slate-800 mb-1">Department Authority *</label>
+                        <select name="department" required class="w-full px-3.5 py-2.5 font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 bg-white">
+                            {% for d in departments %}
+                                <option value="{{ d.id }}">{{ d.name }} ({{ d.id }})</option>
+                            {% endfor %}
+                            <option value="GENERAL">General Public Services</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-black text-slate-800 mb-1">Associated Application Ref ID (Optional)</label>
+                        <input type="text" name="file_id" placeholder="e.g. GOV-2026-8120"
+                               value="{% if selected_file %}{{ selected_file.id }}{% endif %}"
+                               class="w-full px-3.5 py-2.5 font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 font-mono">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-black text-slate-800 mb-1">Nature of Grievance / Feedback Category *</label>
+                    <select name="category" required class="w-full px-3.5 py-2.5 font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 bg-white">
+                        <option value="Inordinate Processing Delay / SLA Exceeded">Inordinate Processing Delay / SLA Exceeded</option>
+                        <option value="Document Verification / Scrutiny Dispute">Document Verification / Scrutiny Dispute</option>
+                        <option value="Payment Gateway / Fee Reconciliation Issue">Payment Gateway / Fee Reconciliation Issue</option>
+                        <option value="Officer Lack of Response / Inaction">Officer Lack of Response / Inaction</option>
+                        <option value="General Service Review & Suggestions">General Service Review & Suggestions</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-black text-slate-800 mb-1">Priority / Urgency *</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="p-2 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-slate-100 font-bold">
+                            <input type="radio" name="priority" value="NORMAL" class="text-rose-600"> Normal
+                        </label>
+                        <label class="p-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-amber-100 font-bold text-amber-900">
+                            <input type="radio" name="priority" value="HIGH" checked class="text-rose-600"> High
+                        </label>
+                        <label class="p-2 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer hover:bg-rose-100 font-bold text-rose-900">
+                            <input type="radio" name="priority" value="URGENT" class="text-rose-600"> Urgent
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-black text-slate-800 mb-1">Detailed Grievance / Difficulty Description *</label>
+                    <textarea name="description" rows="4" required placeholder="Please describe the delay, hurdle, or difficulty faced in detail..."
+                              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500"></textarea>
+                </div>
+
+                <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-[11px] text-rose-900 flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-rose-600 shrink-0"></i>
+                    <span>Grievances are tracked under CPGRAMS and reviewed directly by the supervisory Department Head.</span>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeGrievanceModal()" class="px-4 py-2.5 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-xl shadow-lg transition flex items-center gap-1.5">
+                        <i data-lucide="send" class="w-4 h-4"></i> Submit Grievance to Department Head
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 <script>
     function switchTab(tab) {
+        document.getElementById('tabContentApps').classList.add('hidden');
+        document.getElementById('tabContentCerts').classList.add('hidden');
+        document.getElementById('tabContentGrievances').classList.add('hidden');
+        
+        document.getElementById('tabBtnApps').className = "px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition shrink-0";
+        document.getElementById('tabBtnCerts').className = "px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition shrink-0";
+        document.getElementById('tabBtnGrievances').className = "px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition shrink-0";
+
         if (tab === 'applications') {
             document.getElementById('tabContentApps').classList.remove('hidden');
-            document.getElementById('tabContentCerts').classList.add('hidden');
-            document.getElementById('tabBtnApps').className = "px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl";
-            document.getElementById('tabBtnCerts').className = "px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition";
-        } else {
-            document.getElementById('tabContentApps').classList.add('hidden');
+            document.getElementById('tabBtnApps').className = "px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl shrink-0";
+        } else if (tab === 'certificates') {
             document.getElementById('tabContentCerts').classList.remove('hidden');
-            document.getElementById('tabBtnCerts').className = "px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl";
-            document.getElementById('tabBtnApps').className = "px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition";
+            document.getElementById('tabBtnCerts').className = "px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl shrink-0";
+        } else if (tab === 'grievances') {
+            document.getElementById('tabContentGrievances').classList.remove('hidden');
+            document.getElementById('tabBtnGrievances').className = "px-5 py-2.5 border-b-2 border-rose-600 text-rose-700 font-black text-xs flex items-center gap-2 bg-white rounded-t-xl shrink-0";
         }
         if (window.lucide) lucide.createIcons();
     }
+
+    function openGrievanceModal() {
+        document.getElementById('grievanceModal').classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function closeGrievanceModal() {
+        document.getElementById('grievanceModal').classList.add('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const initialTab = "{{ initial_tab }}";
+        if (initialTab && initialTab !== 'applications') {
+            switchTab(initialTab);
+        }
+    });
 </script>
 {% endblock %}

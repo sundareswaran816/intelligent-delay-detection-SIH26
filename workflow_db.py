@@ -453,7 +453,23 @@ DATABASE = {
             "esign": None
         }
     ],
-    "issued_certificates": [],
+        "grievances": [
+        {
+            "id": "CPGRAMS-2026-9812",
+            "citizen_name": "Sundareswaran Iyer",
+            "citizen_phone": "9876543210",
+            "file_id": "GOV-2026-8120",
+            "service_name": "Senior Citizen Family Pension Sanction",
+            "department": "PENSION",
+            "category": "Inordinate Processing Delay / SLA Exceeded",
+            "priority": "URGENT",
+            "description": "Pension payment order succession verification has been pending for over 5 days without officer review notes.",
+            "status": "ESCALATED_TO_DEPT_HEAD",
+            "timestamp": "08 Sep 2026, 18:30:00 IST",
+            "officer_action": "Department Head issued priority notice to Senior Sanctioning Officer."
+        }
+    ],
+"issued_certificates": [],
     "audit_logs": [],
     "webhook_logs": []
 }
