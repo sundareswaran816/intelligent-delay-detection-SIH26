@@ -1,117 +1,134 @@
 {% extends "base.html" %}
 
-{% block title %}Citizen Service & Certificate Delivery Hub - Team Civiora{% endblock %}
+{% block title %}Citizen e-Services Portal - Application Tracking & Certificates{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
-    <!-- Header Banner -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div>
-            <div class="flex items-center gap-2">
-                <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded border border-emerald-200 uppercase">
-                    Citizen Service Portal
-                </span>
-                <span class="text-xs text-slate-400">•</span>
-                <span class="text-xs font-semibold text-slate-600">DigiLocker & Income Tax Verified</span>
-            </div>
-            <h1 class="text-2xl font-black text-slate-900 mt-1">My Applications & Certificate Hub</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Track your submitted requests, view proactive AI delay intelligence, and download E-Signed certificates.</p>
-        </div>
-        
-        <div>
-            <a href="/citizen/wizard" class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-2 transition">
-                <i data-lucide="file-plus-2" class="w-4 h-4"></i> Apply for New Service
-            </a>
-        </div>
-    </div>
-
-    <!-- Dual Tab System: 1. Active Applications & Delay Guidance | 2. My Issued E-Signed Certificates -->
-    <div class="flex gap-3 border-b border-slate-200 pb-2">
-        <button onclick="switchTab('tracking')" id="tabBtnTracking" class="px-4 py-2 text-xs font-black border-b-2 border-orange-600 text-orange-700 transition flex items-center gap-1.5">
-            <i data-lucide="activity" class="w-4 h-4"></i> Active Tracking & Delay Guidance
-        </button>
-        <button onclick="switchTab('certificates')" id="tabBtnCertificates" class="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-800 transition flex items-center gap-1.5">
-            <i data-lucide="award" class="w-4 h-4"></i> My Issued E-Signed Certificates
-            {% if completed_files|length > 0 %}
-                <span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded-full">{{ completed_files|length }}</span>
-            {% endif %}
-        </button>
-    </div>
-
-    <!-- TAB 1: TRACKING & DELAY GUIDANCE -->
-    <div id="tabContentTracking" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Left: Application List & Search -->
-        <div class="lg:col-span-5 space-y-4">
-            <form method="GET" action="/citizen" class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex gap-2">
-                <input type="text" name="search_id" value="{{ search_id }}" placeholder="Enter Tracking ID (e.g. GOV-2026-9210)" 
-                       class="flex-grow px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 font-mono">
-                <button type="submit" class="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold hover:bg-slate-900 transition">Track</button>
-            </form>
-
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                <h2 class="text-xs font-black text-slate-700 uppercase tracking-wider">Submitted Applications</h2>
-                <div class="divide-y divide-slate-100">
-                    {% for f in files %}
-                        <a href="/citizen?search_id={{ f.id }}" class="block p-3.5 hover:bg-slate-50 rounded-xl transition flex items-center justify-between {% if selected_file and selected_file.id == f.id %}bg-orange-50/60 border border-orange-200{% endif %}">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">{{ f.id }}</span>
-                                    <span class="text-xs font-bold text-slate-800">{{ f.service_name }}</span>
-                                </div>
-                                <div class="text-[11px] text-slate-500 mt-1">
-                                    Dept: <strong class="text-slate-700">{{ f.department }}</strong> • Stage: <span class="font-semibold text-slate-700">{{ f.current_stage.replace('_', ' ') }}</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xs font-bold {% if f.prediction.delay_risk_pct > 60 %} text-rose-600 {% elif f.prediction.delay_risk_pct > 30 %} text-amber-600 {% else %} text-emerald-700 {% endif %}">
-                                    {{ f.prediction.delay_risk_pct }}% Risk
-                                </span>
-                                <span class="block text-[10px] text-slate-400">ETA: {{ f.prediction.predicted_eta }}</span>
-                            </div>
-                        </a>
-                    {% endfor %}
+    <!-- TOP TRACKING STRIP (National Portal Theme) -->
+    <div class="bg-white p-5 rounded-2xl border-2 border-[#004080] shadow-md space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-[#002147] text-white flex items-center justify-center font-bold text-xs">
+                    🔍
+                </div>
+                <div>
+                    <h2 class="text-sm font-black text-[#002147] uppercase tracking-wide">Track Application Status & Download Certificates</h2>
+                    <p class="text-xs text-slate-500">Enter your application reference number to view real-time stage progress and delay predictions.</p>
                 </div>
             </div>
+            <a href="/citizen/wizard" class="px-4 py-2 bg-[#FF6F00] hover:bg-[#e65c00] text-white text-xs font-black rounded-xl shadow transition flex items-center gap-1.5">
+                <i data-lucide="file-plus" class="w-4 h-4"></i> New Service Application
+            </a>
         </div>
 
-        <!-- Right: Real-time Application Tracking & Actionable Delay Guidance -->
-        <div class="lg:col-span-7 space-y-6">
-            {% if selected_file %}
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-                    <div class="flex items-start justify-between border-b border-slate-100 pb-4">
-                        <div>
-                            <span class="text-xs font-mono font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">{{ selected_file.id }}</span>
-                            <h2 class="text-xl font-black text-slate-900 mt-1.5">{{ selected_file.service_name }}</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Applicant: <strong class="text-slate-700">{{ selected_file.applicant_name }}</strong> • Razorpay Ref: <span class="font-mono text-[10px] text-slate-600">{{ selected_file.payment_ref if selected_file.payment_ref else 'pay_rzp_98124' }}</span></p>
-                        </div>
+        <form action="/citizen" method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-1">
+            <div class="sm:col-span-4">
+                <select name="dept_filter" class="w-full px-3.5 py-2.5 text-xs font-bold border border-slate-300 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-[#004080] focus:outline-none text-slate-800">
+                    <option value="">-- All Departments & Services --</option>
+                    {% for d in departments %}
+                        <option value="{{ d.id }}">{{ d.name }} ({{ d.id }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="sm:col-span-5">
+                <input type="text" name="search_id" value="{{ search_id }}" placeholder="Enter Application Reference ID (e.g. GOV-2026-8120)"
+                       class="w-full px-3.5 py-2.5 text-xs font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#004080] focus:outline-none font-mono">
+            </div>
+            <div class="sm:col-span-3">
+                <button type="submit" class="w-full py-2.5 bg-[#004080] hover:bg-[#002147] text-white font-black rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5">
+                    <i data-lucide="search" class="w-4 h-4"></i> Track / Search File
+                </button>
+            </div>
+        </form>
+    </div>
 
-                        <div class="text-right">
-                            {% if selected_file.current_stage == 'DISPATCH_DIGILOCKER' %}
-                                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-black rounded-full border border-emerald-300 flex items-center gap-1">
-                                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> E-Signed & Completed
-                                </span>
-                            {% elif selected_file.prediction.risk_category == 'CRITICAL' %}
-                                <span class="px-3 py-1 bg-rose-100 text-rose-800 text-xs font-black rounded-full border border-rose-300 flex items-center gap-1">
-                                    <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> High Delay Risk ({{ selected_file.prediction.delay_risk_pct }}%)
+    <!-- TABS BAR (Active Applications vs E-Signed Certificates) -->
+    <div class="flex border-b-2 border-slate-200 gap-2">
+        <button onclick="switchTab('applications')" id="tabBtnApps" class="px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl">
+            <i data-lucide="folder" class="w-4 h-4"></i> Active Applications ({{ files|length }})
+        </button>
+        <button onclick="switchTab('certificates')" id="tabBtnCerts" class="px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition">
+            <i data-lucide="award" class="w-4 h-4 text-emerald-600"></i> Issued Certificates Hub ({{ completed_files|length }})
+        </button>
+    </div>
+
+    <!-- TAB 1: ACTIVE APPLICATIONS -->
+    <div id="tabContentApps" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left: Application List -->
+        <div class="lg:col-span-4 space-y-3">
+            <div class="bg-[#002147] text-white p-3 rounded-xl flex justify-between items-center text-xs">
+                <span class="font-bold">Submitted Service Files</span>
+                <span class="font-mono text-amber-300 text-[11px]">{{ files|length }} Found</span>
+            </div>
+
+            <div class="space-y-2.5 max-h-[700px] overflow-y-auto pr-1">
+                {% for f in files %}
+                    {% set is_selected = (selected_file and selected_file.id == f.id) %}
+                    <a href="/citizen?search_id={{ f.id }}" 
+                       class="block p-4 rounded-2xl border-2 transition text-left shadow-sm {% if is_selected %} bg-white border-[#004080] ring-4 ring-blue-100 {% else %} bg-white border-slate-200 hover:border-slate-300 {% endif %}">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-xs font-black text-[#004080] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">{{ f.id }}</span>
+                            {% if f.prediction.risk_category == 'CRITICAL' %}
+                                <span class="px-2 py-0.5 bg-rose-100 text-rose-800 text-[10px] font-black rounded border border-rose-300 flex items-center gap-1">
+                                    <i data-lucide="alert-triangle" class="w-3 h-3"></i> {{ f.prediction.delay_risk_pct }}% Risk
                                 </span>
                             {% else %}
-                                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-black rounded-full border border-emerald-300 flex items-center gap-1">
-                                    <i data-lucide="check" class="w-3.5 h-3.5"></i> On Track ({{ selected_file.prediction.delay_risk_pct }}%)
+                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded border border-emerald-300 flex items-center gap-1">
+                                    <i data-lucide="check" class="w-3 h-3"></i> Normal
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <h4 class="font-black text-sm text-slate-900 mt-2 line-clamp-1">{{ f.service_name }}</h4>
+                        <div class="text-xs text-slate-500 mt-1">Applicant: <strong class="text-slate-700">{{ f.applicant_name }}</strong></div>
+
+                        <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                            <span class="text-slate-500">Stage: <strong class="text-orange-700">{{ f.current_stage.replace('_', ' ').title() }}</strong></span>
+                            <span class="text-blue-700 font-bold">Inspect →</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Right: Selected Application Details -->
+        <div class="lg:col-span-8 space-y-6">
+            {% if selected_file %}
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                    <div class="flex flex-wrap items-start justify-between border-b border-slate-200 pb-4 gap-2">
+                        <div>
+                            <span class="text-xs font-mono font-black text-[#004080] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">{{ selected_file.id }}</span>
+                            <h2 class="text-xl font-black text-[#002147] mt-1.5">{{ selected_file.service_name }}</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Applicant: <strong class="text-slate-800">{{ selected_file.applicant_name }}</strong> • Razorpay Ref: <span class="font-mono text-[11px] text-slate-600 font-semibold">{{ selected_file.payment_ref }}</span></p>
+                        </div>
+
+                        <div>
+                            {% if selected_file.current_stage == 'DISPATCH_DIGILOCKER' %}
+                                <span class="px-3.5 py-1.5 bg-emerald-100 text-emerald-800 text-xs font-black rounded-full border border-emerald-300 flex items-center gap-1.5">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i> E-Signed & Certificate Issued
+                                </span>
+                            {% elif selected_file.prediction.risk_category == 'CRITICAL' %}
+                                <span class="px-3.5 py-1.5 bg-rose-100 text-rose-800 text-xs font-black rounded-full border border-rose-300 flex items-center gap-1.5">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4"></i> High Delay Risk ({{ selected_file.prediction.delay_risk_pct }}%)
+                                </span>
+                            {% else %}
+                                <span class="px-3.5 py-1.5 bg-emerald-100 text-emerald-800 text-xs font-black rounded-full border border-emerald-300 flex items-center gap-1.5">
+                                    <i data-lucide="check" class="w-4 h-4"></i> On Track ({{ selected_file.prediction.delay_risk_pct }}%)
                                 </span>
                             {% endif %}
                         </div>
                     </div>
 
-                    <!-- ACTIONABLE DELAY GUIDANCE BOX (Specification §15) -->
-                    <div class="p-5 rounded-2xl border-2 {% if selected_file.prediction.delay_risk_pct > 50 %}border-amber-300 bg-amber-50/50{% else %}border-emerald-200 bg-emerald-50/50{% endif %} space-y-3">
+                    <!-- ACTIONABLE DELAY GUIDANCE BOX -->
+                    <div class="p-5 rounded-2xl border-2 {% if selected_file.prediction.delay_risk_pct > 50 %}border-amber-300 bg-amber-50/60{% else %}border-blue-200 bg-blue-50/40{% endif %} space-y-3">
                         <div class="flex items-center gap-2">
-                            <i data-lucide="info" class="w-5 h-5 {% if selected_file.prediction.delay_risk_pct > 50 %}text-amber-600{% else %}text-emerald-600{% endif %}"></i>
-                            <h3 class="text-sm font-black text-slate-900">Actionable Citizen Delay Guidance (Specification §15)</h3>
+                            <i data-lucide="info" class="w-5 h-5 {% if selected_file.prediction.delay_risk_pct > 50 %}text-amber-600{% else %}text-[#004080]{% endif %}"></i>
+                            <h3 class="text-sm font-black text-[#002147]">Actionable Citizen Delay Guidance</h3>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                             <div class="p-3 bg-white rounded-xl border border-slate-200">
-                                <span class="font-bold text-slate-500 block mb-0.5">Delay Reason:</span>
+                                <span class="font-bold text-slate-500 block mb-0.5">Delay Reason / Health:</span>
                                 <span class="text-slate-800 font-medium">{{ selected_file.delay_guidance.delay_reason }}</span>
                             </div>
                             <div class="p-3 bg-white rounded-xl border border-slate-200">
@@ -129,33 +146,38 @@
                         </div>
                     </div>
 
-                                        <!-- UPLOADED & VERIFIED DOCUMENTS LIST -->
+                    <!-- UPLOADED & VERIFIED DOCUMENTS LIST WITH LIVE COPY OPENER -->
                     <div class="space-y-3 pt-2">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                                <i data-lucide="files" class="w-4 h-4 text-blue-600"></i> Uploaded Documents & Verification Copies ({{ selected_file.uploaded_docs|length }})
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <h3 class="text-xs font-black text-[#002147] uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="files" class="w-4 h-4 text-[#004080]"></i> Submitted Document Copies & Verification Records ({{ selected_file.uploaded_docs|length }})
                             </h3>
-                            <span class="text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">✓ DigiLocker & Gov API Verified</span>
+                            <span class="text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                                ✓ DigiLocker & Gov API Verified
+                            </span>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {% for doc in selected_file.uploaded_docs %}
-                                <div class="p-3.5 bg-slate-50 hover:bg-white rounded-xl border border-slate-200 space-y-2 transition shadow-sm">
+                                <div class="p-3.5 bg-slate-50 hover:bg-white rounded-xl border border-slate-200 space-y-2.5 transition shadow-sm">
                                     <div class="flex items-start justify-between gap-2">
                                         <div class="space-y-0.5">
                                             <div class="text-xs font-black text-slate-900 flex items-center gap-1.5">
                                                 <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-600"></i> {{ doc.name }}
                                             </div>
                                             <div class="text-[11px] text-slate-500">
+                                                File: <strong class="font-mono text-slate-700">{{ doc.filename }}</strong>
+                                            </div>
+                                            <div class="text-[11px] text-slate-500">
                                                 Verifier: <strong class="text-blue-700">{{ doc.verifier }}</strong>
                                             </div>
-                                            <div class="font-mono text-[10px] text-emerald-800">Token: {{ doc.token }}</div>
+                                            <div class="font-mono text-[10px] text-emerald-800 font-bold">Token: {{ doc.token }}</div>
                                         </div>
                                         <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold text-[9px] rounded">Verified</span>
                                     </div>
                                     <div class="pt-1.5 border-t border-slate-200 flex justify-end">
-                                        <a href="/document/view/{{ selected_file.id }}/{{ doc.id if doc.id else loop.index0 }}" target="_blank" class="px-3 py-1 bg-white hover:bg-slate-100 text-blue-700 font-bold text-xs rounded-lg border border-blue-200 flex items-center gap-1 transition">
-                                            <i data-lucide="external-link" class="w-3 h-3"></i> View / Open Copy
+                                        <a href="/document/view/{{ selected_file.id }}/{{ doc.id if doc.id else loop.index0 }}" target="_blank" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-[#004080] font-bold text-xs rounded-lg border border-blue-300 flex items-center gap-1 transition">
+                                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open Document Copy
                                         </a>
                                     </div>
                                 </div>
@@ -164,19 +186,19 @@
                     </div>
 
                     <!-- Workflow Movement Timeline -->
-                    <div>
-                        <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-3">Live Milestone Timeline</h3>
-                        <div class="relative border-l-2 border-orange-200 ml-3 space-y-6">
+                    <div class="pt-2">
+                        <h3 class="text-xs font-black text-[#002147] uppercase tracking-wider mb-3">Milestone Progress Timeline</h3>
+                        <div class="relative border-l-2 border-blue-200 ml-3 space-y-5">
                             {% for stage in stages %}
                                 {% set is_current = (stage == selected_file.current_stage) %}
                                 <div class="relative pl-6">
                                     <span class="absolute -left-2 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-white 
-                                        {% if is_current %} bg-orange-600 ring-4 ring-orange-100 {% else %} bg-slate-300 {% endif %}">
+                                        {% if is_current %} bg-[#FF6F00] ring-4 ring-orange-100 {% else %} bg-slate-300 {% endif %}">
                                     </span>
-                                    <div class="text-xs font-bold {% if is_current %} text-orange-700 text-sm {% else %} text-slate-600 {% endif %}">
+                                    <div class="text-xs font-bold {% if is_current %} text-[#004080] text-sm font-black {% else %} text-slate-600 {% endif %}">
                                         {{ stage.replace('_', ' ').title() }}
                                         {% if is_current %}
-                                            <span class="ml-2 text-[10px] bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-bold border border-orange-200">CURRENT MILESTONE</span>
+                                            <span class="ml-2 text-[10px] bg-orange-100 text-orange-900 px-2 py-0.5 rounded-full font-bold border border-orange-300">CURRENT MILESTONE</span>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -188,10 +210,10 @@
         </div>
     </div>
 
-    <!-- TAB 2: ISSUED CERTIFICATES DOWNLOAD HUB -->
-    <div id="tabContentCertificates" class="hidden space-y-4">
+    <!-- TAB 2: ISSUED CERTIFICATES HUB -->
+    <div id="tabContentCerts" class="hidden space-y-4">
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <h2 class="text-base font-black text-slate-900">Your Officially E-Signed Government Certificates</h2>
+            <h2 class="text-base font-black text-[#002147]">Your Officially E-Signed Government Certificates</h2>
             <p class="text-xs text-slate-500">Certificates e-signed by the sanctioning authority are stored in your DigiLocker and available for direct download.</p>
 
             <div class="divide-y divide-slate-100">
@@ -212,8 +234,8 @@
                         </a>
                     </div>
                 {% else %}
-                    <div class="p-8 text-center text-xs text-slate-500">
-                        No issued certificates yet. Once an officer completes final E-Signing, your official certificate will appear here.
+                    <div class="p-8 text-center text-xs text-slate-400">
+                        No issued certificates yet. Submitted applications will appear here once the final officer applies the digital e-signature.
                     </div>
                 {% endfor %}
             </div>
@@ -223,17 +245,18 @@
 
 <script>
     function switchTab(tab) {
-        if (tab === 'tracking') {
-            document.getElementById('tabContentTracking').classList.remove('hidden');
-            document.getElementById('tabContentCertificates').classList.add('hidden');
-            document.getElementById('tabBtnTracking').className = "px-4 py-2 text-xs font-black border-b-2 border-orange-600 text-orange-700 transition flex items-center gap-1.5";
-            document.getElementById('tabBtnCertificates').className = "px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-800 transition flex items-center gap-1.5";
+        if (tab === 'applications') {
+            document.getElementById('tabContentApps').classList.remove('hidden');
+            document.getElementById('tabContentCerts').classList.add('hidden');
+            document.getElementById('tabBtnApps').className = "px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl";
+            document.getElementById('tabBtnCerts').className = "px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition";
         } else {
-            document.getElementById('tabContentTracking').classList.add('hidden');
-            document.getElementById('tabContentCertificates').classList.remove('hidden');
-            document.getElementById('tabBtnCertificates').className = "px-4 py-2 text-xs font-black border-b-2 border-orange-600 text-orange-700 transition flex items-center gap-1.5";
-            document.getElementById('tabBtnTracking').className = "px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-800 transition flex items-center gap-1.5";
+            document.getElementById('tabContentApps').classList.add('hidden');
+            document.getElementById('tabContentCerts').classList.remove('hidden');
+            document.getElementById('tabBtnCerts').className = "px-5 py-2.5 border-b-2 border-[#004080] text-[#004080] font-black text-xs flex items-center gap-2 bg-white rounded-t-xl";
+            document.getElementById('tabBtnApps').className = "px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-900 font-bold text-xs flex items-center gap-2 rounded-t-xl transition";
         }
+        if (window.lucide) lucide.createIcons();
     }
 </script>
 {% endblock %}

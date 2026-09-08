@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}National File Verification & Delay Intelligence Portal - SIH 2026{% endblock %}</title>
+    <title>{% block title %}National File Verification & Delay Prevention Portal - Government of India{% endblock %}</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -11,12 +11,19 @@
             theme: {
                 extend: {
                     colors: {
-                        govOrange: '#EA580C',
-                        govOrangeDark: '#C2410C',
-                        govGreen: '#15803D',
-                        govGreenDark: '#166534',
-                        govNavy: '#1E293B',
-                        govHeader: '#0B192C'
+                        govNavy: '#002147',
+                        govBlue: '#004080',
+                        govBlueLight: '#e8f0fe',
+                        govBlueDark: '#001a33',
+                        govSaffron: '#FF6F00',
+                        govSaffronLight: '#FFF3E0',
+                        govGreen: '#138808',
+                        govGreenLight: '#E8F5E9',
+                        govSlate: '#1E293B',
+                        govBorder: '#D1D5DB'
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
                     }
                 }
             }
@@ -27,103 +34,182 @@
     <style>
         .tricolor-strip {
             background: linear-gradient(90deg, #FF9933 0%, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%, #138808 100%);
-            height: 5px;
+            height: 4px;
+        }
+        .portal-card {
+            transition: all 0.25s ease-in-out;
+        }
+        .portal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 33, 71, 0.12);
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
+<body class="bg-[#f0f4f8] text-slate-800 font-sans min-h-screen flex flex-col antialiased">
     <!-- Top Tricolor Ribbon -->
     <div class="tricolor-strip shadow-sm"></div>
 
-    <!-- Government Official Header -->
-    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
-        <!-- Top Subheader -->
-        <div class="bg-slate-900 text-white text-[11px] py-1 px-4">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <span class="font-medium text-slate-300">Government of India • Ministry of Personnel, Public Grievances and Pensions</span>
+    <!-- PRIMARY NATIONAL PORTAL HEADER -->
+    <header class="sticky top-0 z-50 shadow-md">
+        <!-- 1. Top Emblem & Digital India Masthead -->
+        <div class="bg-[#002147] text-white py-2.5 px-4 sm:px-6 lg:px-8 border-b border-[#003366]">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+                <!-- Left: Ashoka Emblem & Government Title -->
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-amber-400 font-serif text-lg font-bold shadow-inner">
+                        🏛️
+                    </div>
+                    <div>
+                        <div class="text-[11px] uppercase tracking-widest text-slate-300 font-bold flex items-center gap-1.5">
+                            <span>भारत सरकार</span>
+                            <span class="text-slate-400">•</span>
+                            <span>GOVERNMENT OF INDIA</span>
+                        </div>
+                        <a href="/" class="text-base sm:text-lg font-black tracking-tight text-white hover:text-amber-300 transition flex items-center gap-2">
+                            <span>CIVIORA</span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-400/30 rounded">
+                                National File Workflow & Delay Prevention
+                            </span>
+                        </a>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3 text-slate-400">
-                    <span>Smart India Hackathon 2026</span>
-                    <span>|</span>
-                    <span class="text-emerald-400 font-semibold">● AI Delay Engine Active</span>
+
+                <!-- Center: Slogan -->
+                <div class="hidden lg:block text-center text-xs">
+                    <div class="font-bold text-white tracking-wide">Most Used Indian Government Services Portal</div>
+                    <div class="text-[11px] text-slate-300 font-medium">Apply • Check Status • Access Services • Prevent Delays</div>
+                </div>
+
+                <!-- Right: Digital India & Quick Controls -->
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex flex-col text-right">
+                        <span class="text-[11px] font-bold text-amber-400 flex items-center justify-end gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Digital India
+                        </span>
+                        <span class="text-[10px] text-slate-300">for a Better Tomorrow</span>
+                    </div>
+                    <div class="h-6 w-px bg-white/20 hidden sm:block"></div>
+                    <div class="flex items-center gap-1.5 text-xs text-slate-200">
+                        <span class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-bold hover:bg-white/20 cursor-pointer">A-</span>
+                        <span class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-bold hover:bg-white/20 cursor-pointer">A</span>
+                        <span class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-bold hover:bg-white/20 cursor-pointer">A+</span>
+                        <span class="px-2 py-0.5 bg-amber-500 text-slate-900 rounded font-black text-[10px] ml-1">English / हिंदी</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Navbar -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div class="flex items-center justify-between">
-                <!-- Portal Brand / Emblem -->
-                <a href="{% if user_role == 'citizen' %}/citizen{% elif user_role == 'officer' %}/officer{% else %}/{% endif %}" class="flex items-center space-x-3.5">
-                    <div class="w-12 h-12 rounded-xl bg-orange-50 border-2 border-orange-500 flex flex-col items-center justify-center shadow-sm">
-                        <span class="text-xs font-black text-orange-600">🇮🇳 GOV</span>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-black text-xl tracking-tight text-slate-900">CIVIORA</span>
-                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-orange-100 text-orange-800 border border-orange-200 rounded">
-                                File Intelligence Portal
-                            </span>
-                        </div>
-                        <span class="block text-xs text-slate-500 font-medium">National Workflow & Delay Prevention System</span>
-                    </div>
-                </a>
+        <!-- 2. Secondary Navigation Bar (Deep Government Blue #004080) -->
+        <div class="bg-[#004080] text-white text-xs font-bold border-b border-[#002d5c]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto py-1.5">
+                <nav class="flex items-center space-x-1 sm:space-x-2 shrink-0">
+                    <a href="/" class="px-3 py-1.5 rounded hover:bg-[#003366] text-white flex items-center gap-1.5 transition">
+                        <i data-lucide="home" class="w-3.5 h-3.5"></i> Home
+                    </a>
+                    <a href="/citizen" class="px-3 py-1.5 rounded hover:bg-[#003366] text-slate-100 flex items-center gap-1.5 transition">
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-amber-300"></i> Citizen Services
+                    </a>
+                    <a href="/citizen/wizard" class="px-3 py-1.5 rounded bg-[#FF6F00] hover:bg-[#e65c00] text-white flex items-center gap-1.5 transition shadow-sm">
+                        <i data-lucide="file-plus" class="w-3.5 h-3.5"></i> Apply for Service
+                    </a>
+                    <a href="/officer" class="px-3 py-1.5 rounded hover:bg-[#003366] text-slate-100 flex items-center gap-1.5 transition">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> Officer Desk
+                    </a>
+                    <a href="/dept-head" class="px-3 py-1.5 rounded hover:bg-[#003366] text-slate-100 flex items-center gap-1.5 transition">
+                        <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> SLA & Bottlenecks
+                    </a>
+                    <a href="/admin" class="px-3 py-1.5 rounded hover:bg-[#003366] text-slate-100 flex items-center gap-1.5 transition">
+                        <i data-lucide="webhook" class="w-3.5 h-3.5"></i> Webhook Audit
+                    </a>
+                </nav>
 
-                <!-- Role Specific Navigation -->
-                <nav class="flex items-center space-x-2">
-                    {% if user_role == 'citizen' %}
-                        <a href="/citizen" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 border border-slate-200">
-                            <i data-lucide="layout-list" class="w-4 h-4 text-orange-600"></i> My Applications
-                        </a>
-                        <a href="/citizen/wizard" class="px-4 py-2 rounded-lg text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white transition flex items-center gap-1.5 shadow-sm">
-                            <i data-lucide="file-plus-2" class="w-4 h-4"></i> Apply for Service
-                        </a>
-                        <a href="/logout" class="px-3 py-2 rounded-lg text-xs font-semibold text-rose-700 hover:bg-rose-50 transition flex items-center gap-1 border border-rose-200">
-                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
-                        </a>
-                    {% elif user_role == 'officer' %}
-                        <a href="/officer" class="px-3.5 py-2 rounded-lg text-xs font-bold text-orange-900 bg-orange-50 border border-orange-200 flex items-center gap-1.5">
-                            <i data-lucide="shield-check" class="w-4 h-4 text-orange-600"></i> Assigned Department Queue
-                        </a>
-                        <a href="/dept-head" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 border border-slate-200">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-600"></i> SLA & Bottlenecks
-                        </a>
-                        <a href="/admin" class="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 border border-slate-200">
-                            <i data-lucide="webhook" class="w-4 h-4 text-blue-600"></i> Webhook Logs
-                        </a>
-                        <a href="/logout" class="px-3 py-2 rounded-lg text-xs font-semibold text-rose-700 hover:bg-rose-50 transition flex items-center gap-1 border border-rose-200">
-                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
+                <div class="flex items-center gap-2 pl-4 shrink-0">
+                    {% if user_role %}
+                        <a href="/logout" class="px-3 py-1 rounded bg-rose-700/80 hover:bg-rose-800 text-white font-bold flex items-center gap-1 text-[11px] transition">
+                            <i data-lucide="log-out" class="w-3 h-3"></i> Logout
                         </a>
                     {% else %}
-                        <div class="flex items-center gap-2 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
-                            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span> Authorized Portal
-                        </div>
+                        <a href="/login/citizen" class="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px]">
+                            Citizen Login
+                        </a>
+                        <a href="/login/officer" class="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px]">
+                            Officer Login
+                        </a>
                     {% endif %}
-                </nav>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-2">
-            <div class="flex items-center gap-2">
-                <span class="font-bold text-slate-700">Team Civiora</span> • Smart India Hackathon 2026
+    <!-- OFFICIAL NATIONAL E-GOVERNANCE FOOTER -->
+    <footer class="bg-[#002147] text-white border-t-4 border-[#FF6F00] mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs border-b border-[#003366] pb-6">
+                <div class="space-y-2">
+                    <div class="font-black text-sm text-white flex items-center gap-2">
+                        🏛️ Government of India
+                    </div>
+                    <p class="text-slate-300 leading-relaxed">
+                        Ministry of Personnel, Public Grievances and Pensions • National E-Governance Division (NeGD)
+                    </p>
+                    <div class="font-mono text-[11px] text-amber-400">SIH 2026 Innovation Initiative</div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Quick Portals</div>
+                    <ul class="space-y-1 text-slate-300">
+                        <li><a href="/citizen" class="hover:text-amber-300">Citizen Application Tracking</a></li>
+                        <li><a href="/citizen/wizard" class="hover:text-amber-300">Apply for Government Schemes</a></li>
+                        <li><a href="/officer" class="hover:text-amber-300">Officer Document Scrutiny Desk</a></li>
+                        <li><a href="/dept-head" class="hover:text-amber-300">AI Delay Analytics & SLA Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <div class="space-y-1.5">
+                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Integrated Gateways</div>
+                    <ul class="space-y-1 text-slate-300">
+                        <li><span>DigiLocker Verification Bridge</span></li>
+                        <li><span>UIDAI Aadhaar e-KYC Service</span></li>
+                        <li><span>Income Tax CBDT / NSDL PAN</span></li>
+                        <li><span>Razorpay Smart Government Gateway</span></li>
+                    </ul>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Compliance & Standards</div>
+                    <p class="text-slate-400 leading-relaxed text-[11px]">
+                        Built under Section 6A of the Information Technology Act. Cryptographic DSC e-Sign 2.0 & SHA256 audit trails.
+                    </p>
+                    <div class="flex items-center gap-2 text-[10px] text-emerald-400 font-bold">
+                        <span>✓ 100% GIGW 3.0 Compliant</span>
+                    </div>
+                </div>
             </div>
-            <div class="flex gap-4">
-                <span>Designed in accordance with National e-Governance Standards</span>
+
+            <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-3">
+                <div>
+                    Designed & Developed for <strong class="text-white">Smart India Hackathon (SIH 2026)</strong> • Problem Statement #26
+                </div>
+                <div class="flex items-center gap-4 text-[11px]">
+                    <span class="hover:text-white cursor-pointer">Privacy Policy</span>
+                    <span>|</span>
+                    <span class="hover:text-white cursor-pointer">Terms of Service</span>
+                    <span>|</span>
+                    <span class="hover:text-white cursor-pointer">Hyperlinking Policy</span>
+                    <span>|</span>
+                    <span class="hover:text-white cursor-pointer">Helpdesk</span>
+                </div>
             </div>
         </div>
     </footer>
 
     <script>
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
     </script>
 </body>
 </html>

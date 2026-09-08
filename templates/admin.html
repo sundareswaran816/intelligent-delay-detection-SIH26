@@ -5,17 +5,17 @@
 {% block content %}
 <div class="space-y-8">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b-2 border-[#004080] pb-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                <i data-lucide="webhook" class="text-cyan-600"></i> Webhook Trigger Engine & Audit Logs
+            <h1 class="text-2xl font-black text-[#002147] flex items-center gap-2">
+                <i data-lucide="webhook" class="text-[#004080]"></i> Webhook Trigger Engine & Audit Logs
             </h1>
-            <p class="text-sm text-slate-500">Inspect real-time event dispatches to DigiLocker, SMS gateways, and secure audit traces.</p>
+            <p class="text-xs text-slate-500">Inspect real-time event dispatches to DigiLocker, SMS gateways, and secure audit traces.</p>
         </div>
 
         <!-- Manual Webhook Trigger Test -->
         <form action="/admin/trigger-test-webhook" method="POST">
-            <button type="submit" class="px-4 py-2 bg-cyan-700 hover:bg-cyan-800 text-white rounded-lg text-xs font-semibold shadow flex items-center gap-2">
+            <button type="submit" class="px-4 py-2 bg-[#004080] hover:bg-[#002147] text-white rounded-xl text-xs font-black shadow flex items-center gap-2">
                 <i data-lucide="send" class="w-4 h-4"></i> Trigger Test Webhook Event
             </button>
         </form>
