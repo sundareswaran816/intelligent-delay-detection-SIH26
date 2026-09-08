@@ -59,7 +59,7 @@
     </div>
 
     <!-- MAIN WIZARD CONTAINER -->
-    <form id="wizardForm" action="/citizen/wizard/complete" method="POST">
+    <form id="wizardForm" action="/citizen/wizard/complete" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="selected_service_id" id="inputServiceId" value="SRV-PENSION-01">
         <input type="hidden" name="applicant_name" id="inputApplicantName" value="">
         <input type="hidden" name="applicant_phone" id="inputApplicantPhone" value="9876543210">
@@ -416,19 +416,40 @@
             chkContainer.appendChild(card);
         });
 
-        // 2. Render Upload Rows on Step 4 (One below the next)
+        // 2. Render Upload Rows on Step 4 (One below the next with named file inputs)
         const uploadContainer = document.getElementById('dynamicUploadRowsContainer');
         uploadContainer.innerHTML = '';
         srv.required_documents.forEach((doc, idx) => {
             const row = document.createElement('div');
-            row.className = "p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2 text-xs";
+            row.className = "p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-3 text-xs shadow-sm hover:border-orange-300 transition";
             row.innerHTML = `
-                <label class="block text-xs font-bold text-slate-800 flex justify-between items-center">
-                    <span>${idx + 1}. ${doc.name} *</span>
-                    <span class="text-[11px] text-emerald-700 font-bold">✓ Ready for DigiLocker Check</span>
-                </label>
-                <div class="text-[11px] text-slate-500">Cross-verified by: <strong class="text-slate-700">${doc.department_verifier}</strong></div>
-                <input type="file" class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-100 file:text-orange-800">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <span class="font-black text-slate-900 text-sm flex items-center gap-2">
+                            <i data-lucide="file-up" class="w-4 h-4 text-orange-600"></i> ${idx + 1}. ${doc.name} <span class="text-rose-600">*</span>
+                        </span>
+                        <div class="text-[11px] text-slate-500 mt-0.5">
+                            Statutory Verifier: <strong class="text-blue-700 font-bold">${doc.department_verifier}</strong>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-black px-2.5 py-1 bg-orange-100 text-orange-800 rounded-md border border-orange-200">
+                        ${doc.accepted_formats} • Max ${doc.max_size_mb}MB
+                    </span>
+                </div>
+
+                <div class="p-3 bg-white rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center gap-3">
+                    <input type="file" 
+                           name="doc_${doc.id}" 
+                           id="file_input_${doc.id}" 
+                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                           onchange="handleDocFileSelect(this, '${doc.id}')"
+                           class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-orange-600 file:text-white hover:file:bg-orange-700 cursor-pointer">
+                </div>
+
+                <div id="file_status_${doc.id}" class="text-[11px] text-emerald-700 font-bold hidden flex items-center gap-1.5">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+                    <span id="file_name_${doc.id}">File selected</span>
+                </div>
             `;
             uploadContainer.appendChild(row);
         });
@@ -548,5 +569,21 @@
     document.addEventListener('DOMContentLoaded', () => {
         renderServiceChecklist('SRV-PENSION-01');
     });
+
+    function handleDocFileSelect(inputEl, docId) {
+        const statusEl = document.getElementById('file_status_' + docId);
+        const nameEl = document.getElementById('file_name_' + docId);
+        if (inputEl.files && inputEl.files[0]) {
+            const file = inputEl.files[0];
+            const sizeKb = (file.size / 1024).toFixed(1);
+            const sizeStr = sizeKb < 1024 ? sizeKb + ' KB' : (sizeKb / 1024).toFixed(1) + ' MB';
+            nameEl.textContent = 'Selected: ' + file.name + ' (' + sizeStr + ') • Ready for verification upload';
+            statusEl.classList.remove('hidden');
+        } else {
+            statusEl.classList.add('hidden');
+        }
+        if (window.lucide) lucide.createIcons();
+    }
+
 </script>
 {% endblock %}

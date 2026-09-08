@@ -1,3 +1,5 @@
+from fastapi.staticfiles import StaticFiles
+import os, shutil, re
 """
 Civiora SIH Web Application Server (FastAPI + Jinja2 + Webhooks + AI Engine + Razorpay + Digital E-Sign)
 """
@@ -22,6 +24,10 @@ from workflow_db import (
 app = FastAPI(title="Civiora Government File Verification & Workflow Portal - SIH 2026")
 
 templates = Jinja2Templates(directory="templates")
+UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
 
 # Initial Webhook
 if not DATABASE["webhook_logs"]:
@@ -136,36 +142,74 @@ async def citizen_wizard(request: Request):
     )
 
 @app.post("/citizen/wizard/complete")
-async def citizen_wizard_complete(
-    request: Request,
-    selected_service_id: str = Form(...),
-    applicant_name: str = Form(...),
-    applicant_phone: str = Form(...),
-    payment_ref: str = Form("pay_rzp_9812401")
-):
+async def citizen_wizard_complete(request: Request):
+    form = await request.form()
+    selected_service_id = str(form.get("selected_service_id", "SRV-PENSION-01"))
+    applicant_name = str(form.get("applicant_name", "Citizen Applicant")).strip() or "Citizen Applicant"
+    applicant_phone = str(form.get("applicant_phone", "9876543210")).strip() or "9876543210"
+    payment_ref = str(form.get("payment_ref", "pay_rzp_9812401"))
+    
     service = next((s for s in SERVICES_CATALOG if s["id"] == selected_service_id), SERVICES_CATALOG[0])
     new_id = f"GOV-2026-{random.randint(1000, 9999)}"
     
     dept_officers = [o for o in DATABASE["officers"] if o["department"] == service["department"]]
     assigned_officer = random.choice(dept_officers) if dept_officers else DATABASE["officers"][0]
     
-    # Generate uploaded docs dynamically matching the chosen service's required documents
     uploaded_docs = []
-    for doc in service.get("required_documents", []):
-        doc_id = doc.get("id", f"DOC-{random.randint(100, 999)}")
-        clean_fn = doc["name"].lower().replace(" ", "_").replace("/", "_").replace("(", "").replace(")", "").replace("&", "and")[:30] + ".pdf"
+    for idx, doc in enumerate(service.get("required_documents", [])):
+        doc_id = doc.get("id", f"DOC-{idx+1}")
         token_prefix = doc_id.replace("DOC-", "")
         token = f"{token_prefix}-VERIFIED-{random.randint(1000, 9999)}"
+        
+        # Check if citizen uploaded a physical file for this input
+        file_obj = form.get(f"doc_{doc_id}")
+        file_url = None
+        filename = None
+        file_type = "pdf"
+        file_size_str = "1.2 MB"
+        
+        if file_obj and hasattr(file_obj, "filename") and file_obj.filename:
+            raw_filename = os.path.basename(file_obj.filename)
+            clean_fn = re.sub(r'[^a-zA-Z0-9_.-]', '_', raw_filename)
+            saved_name = f"{new_id}_{doc_id}_{clean_fn}"
+            saved_path = os.path.join(UPLOAD_DIR, saved_name)
+            
+            content = await file_obj.read()
+            if len(content) > 0:
+                with open(saved_path, "wb") as f_out:
+                    f_out.write(content)
+                file_url = f"/uploads/{saved_name}"
+                filename = raw_filename
+                size_kb = len(content) / 1024
+                file_size_str = f"{size_kb:.1f} KB" if size_kb < 1024 else f"{(size_kb/1024):.1f} MB"
+                
+                lower_name = clean_fn.lower()
+                if any(lower_name.endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp']):
+                    file_type = "image"
+                elif lower_name.endswith('.pdf'):
+                    file_type = "pdf"
+                else:
+                    file_type = "doc"
+        
+        if not filename or not file_url:
+            clean_name = doc["name"].lower().replace(" ", "_").replace("/", "_").replace("(", "").replace(")", "").replace("&", "and")[:30] + ".pdf"
+            filename = clean_name
+            file_type = "pdf"
+            file_url = None
+        
         uploaded_docs.append({
             "id": doc_id,
             "name": doc["name"],
             "type": doc_id,
-            "filename": clean_fn,
+            "filename": filename,
+            "file_url": file_url,
+            "file_type": file_type,
+            "file_size": file_size_str,
             "verifier": doc.get("department_verifier", "Government Statutory Authority"),
             "verified": True,
             "token": token,
             "instructions": doc.get("instructions", ""),
-            "accepted_formats": doc.get("accepted_formats", "PDF"),
+            "accepted_formats": doc.get("accepted_formats", "PDF, JPG"),
             "max_size_mb": doc.get("max_size_mb", 5)
         })
 
@@ -204,7 +248,6 @@ async def citizen_wizard_complete(
     
     return RedirectResponse(url=f"/citizen?search_id={new_id}&success=true", status_code=303)
 
-# ================= OFFICIAL DOCUMENT SCRUTINY VIEWER ROUTE =================
 @app.get("/document/view/{file_id}/{doc_id}", response_class=HTMLResponse)
 async def view_document_page(request: Request, file_id: str, doc_id: str):
     file_obj = next((f for f in DATABASE["files"] if f["id"].lower() == file_id.strip().lower()), None)
