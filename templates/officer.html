@@ -41,7 +41,7 @@
         <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div>
                 <h2 class="text-base font-black text-slate-900">AI-Prioritized Work Queue ({{ current_officer.department }})</h2>
-                <p class="text-xs text-slate-500">Inspect uploaded citizen documents, verify authenticity tokens, and execute Digital E-Signatures.</p>
+                <p class="text-xs text-slate-500">Inspect citizen submitted files, verify cross-department tokens, and execute Digital E-Signatures.</p>
             </div>
             <span class="px-3 py-1 bg-orange-100 text-orange-900 text-xs font-bold rounded-full border border-orange-200">
                 Department Isolated Queue
@@ -91,8 +91,8 @@
                                     <span class="text-[11px] text-slate-500 block mt-0.5">ETA: {{ f.prediction.predicted_eta }}</span>
                                 </td>
                                 <td class="p-4">
-                                    <button onclick="openDocInspectorModal('{{ f.id }}', '{{ f.applicant_name }}', '{{ f.service_name }}')" class="px-3 py-1.5 bg-blue-50 text-blue-800 hover:bg-blue-100 rounded-lg font-bold border border-blue-200 flex items-center gap-1">
-                                        <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> View & Verify Docs
+                                    <button onclick="openDocInspectorModal('{{ f.id }}')" class="px-3 py-1.5 bg-blue-50 text-blue-800 hover:bg-blue-100 rounded-lg font-bold border border-blue-200 flex items-center gap-1">
+                                        <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> View & Verify Docs ({{ f.uploaded_docs|length }})
                                     </button>
                                 </td>
                                 <td class="p-4 text-right">
@@ -102,7 +102,7 @@
                                         </a>
                                     {% elif f.current_stage == 'FINAL_APPROVAL' %}
                                         <!-- E-Sign Portal Trigger for Final Officer -->
-                                        <button onclick="openEsignModal('{{ f.id }}', '{{ f.applicant_name }}', '{{ f.service_name }}')" 
+                                        <button onclick="openEsignModal('{{ f.id }}')" 
                                                 class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black shadow-md transition flex items-center gap-1.5 ml-auto">
                                             <i data-lucide="pen-tool" class="w-4 h-4"></i> Digital E-Sign & Issue
                                         </button>
@@ -129,52 +129,29 @@
     </div>
 </div>
 
-<!-- 1. MODAL: OFFICER DOCUMENT INSPECTION & VERIFICATION VIEWER -->
+<!-- 1. MODAL: DYNAMIC OFFICER DOCUMENT INSPECTION VIEWER (Shows Exact Uploaded Docs for Selected File) -->
 <div id="docInspectorModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl border border-slate-200">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
                 <h3 class="text-base font-black text-slate-900">Officer Document Scrutiny & Cross-Verification Deck</h3>
-                <p class="text-xs text-slate-500">Inspect citizen submitted files side-by-side with Income Tax (PAN) & UIDAI (Aadhaar) tokens.</p>
+                <p class="text-xs text-slate-500" id="docInspectorSubtitle">Inspect citizen submitted files side-by-side with verified department tokens.</p>
             </div>
             <button onclick="closeDocInspectorModal()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">✕</button>
         </div>
 
-        <div class="space-y-3 text-xs">
-            <!-- Doc Item 1: PAN Card -->
-            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-                <div class="space-y-1">
-                    <span class="font-bold text-slate-900 flex items-center gap-2">
-                        <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i> Permanent Account Number (PAN Card)
-                    </span>
-                    <div class="text-slate-500 text-[11px]">Verifier: <strong>Income Tax Department (CBDT)</strong> • Token: <span class="font-mono text-emerald-700">ITD-PAN-VERIFIED-9821</span></div>
-                </div>
-                <div class="flex gap-2">
-                    <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-[10px]">✓ Authentic & Valid</span>
-                </div>
-            </div>
-
-            <!-- Doc Item 2: Supporting Proof -->
-            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-                <div class="space-y-1">
-                    <span class="font-bold text-slate-900 flex items-center gap-2">
-                        <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i> Supporting Scheme Proof / Title Deed
-                    </span>
-                    <div class="text-slate-500 text-[11px]">Verifier: <strong>State Authority Registry</strong> • Token: <span class="font-mono text-emerald-700">SGR-DOC-OK-5512</span></div>
-                </div>
-                <div class="flex gap-2">
-                    <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-[10px]">✓ Endorsed</span>
-                </div>
-            </div>
+        <div id="docInspectorList" class="space-y-3 text-xs max-h-96 overflow-y-auto pr-1">
+            <!-- Dynamically populated per clicked file -->
         </div>
 
-        <div class="flex justify-end pt-2">
+        <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+            <span class="text-[11px] text-emerald-700 font-bold">✓ All documents verified against official government registries.</span>
             <button type="button" onclick="closeDocInspectorModal()" class="px-5 py-2 text-xs font-black bg-slate-900 text-white rounded-xl shadow">Close Scrutiny Viewer</button>
         </div>
     </div>
 </div>
 
-<!-- 2. MODAL: OFFICER DIGITAL E-SIGN PORTAL (For Final Officer) -->
+<!-- 2. MODAL: OFFICER DIGITAL E-SIGN PORTAL -->
 <div id="esignModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -274,7 +251,9 @@
     </div>
 </div>
 
+<!-- EMBEDDED OFFICER FILES DATA FOR DYNAMIC MODAL -->
 <script>
+    const OFFICER_FILES_DATA = {{ files | tojson }};
     const STAGE_ORDER = [
         "APPLICATION_SUBMITTED",
         "DOCUMENT_VERIFICATION",
@@ -289,7 +268,38 @@
         return stage.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
     }
 
-    function openDocInspectorModal(fileId, applicant, service) {
+    function openDocInspectorModal(fileId) {
+        const fileObj = OFFICER_FILES_DATA.find(f => f.id === fileId);
+        if (!fileObj) return;
+
+        document.getElementById('docInspectorSubtitle').textContent = "Application Ref: " + fileObj.id + " • " + fileObj.applicant_name + " (" + fileObj.service_name + ")";
+        const listContainer = document.getElementById('docInspectorList');
+        listContainer.innerHTML = '';
+
+        if (fileObj.uploaded_docs && fileObj.uploaded_docs.length > 0) {
+            fileObj.uploaded_docs.forEach((doc, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between";
+                item.innerHTML = `
+                    <div class="space-y-1">
+                        <span class="font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i> ${doc.name}
+                        </span>
+                        <div class="text-slate-500 text-[11px]">
+                            File: <strong class="font-mono text-slate-700">${doc.filename || 'document_' + (idx+1) + '.pdf'}</strong> • Verifier: <strong class="text-blue-700">${doc.verifier}</strong>
+                        </div>
+                        <div class="font-mono text-[10px] text-emerald-800 font-bold">Token: ${doc.token}</div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1">
+                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-[10px]">✓ Authentic & Valid</span>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        } else {
+            listContainer.innerHTML = '<div class="p-6 text-center text-slate-500 text-xs">No document records found for this file.</div>';
+        }
+
         document.getElementById('docInspectorModal').classList.remove('hidden');
         if (window.lucide) lucide.createIcons();
     }
@@ -298,7 +308,7 @@
         document.getElementById('docInspectorModal').classList.add('hidden');
     }
 
-    function openEsignModal(fileId, applicant, service) {
+    function openEsignModal(fileId) {
         document.getElementById('modalEsignFileId').value = fileId;
         document.getElementById('esignModal').classList.remove('hidden');
         if (window.lucide) lucide.createIcons();

@@ -1,7 +1,7 @@
 """
 Civiora SIH Webhook, Workflow, Payment & Departmental Cross-Verification Engine
-Handles mock database, audit logs, Razorpay payment tokens, E-Sign records,
-and Departmental verification APIs (Income Tax PAN, UIDAI Aadhaar, Land Registry).
+Handles services catalog with distinct document requirements per service,
+Razorpay payments, DigiLocker verification, E-Sign records, and Department verifiers.
 """
 import json
 import time
@@ -19,17 +19,11 @@ SERVICES_CATALOG = [
         "category": "Welfare & Pension",
         "fee": 50,
         "sla_days": 14,
-        "instructions": [
-            "Applicant must be 60 years or older (or designated legal heir).",
-            "Keep your PAN Card and Aadhaar Card ready for real-time Income Tax & UIDAI database cross-verification.",
-            "Ensure bank account is seeded with Aadhaar for Direct Benefit Transfer (DBT).",
-            "Payment of ₹50.00 Government sanction fee can be made via Razorpay (UPI/QR/Card)."
-        ],
         "required_documents": [
             {
                 "id": "DOC-PAN",
-                "name": "PAN Card",
-                "department_verifier": "Income Tax Department (ITD NSDL / UTIITSL)",
+                "name": "PAN Card (Identity & Tax Record)",
+                "department_verifier": "Income Tax Department (CBDT / NSDL)",
                 "mandatory": True,
                 "accepted_formats": "PDF, JPG, PNG",
                 "max_size_mb": 5,
@@ -37,21 +31,30 @@ SERVICES_CATALOG = [
             },
             {
                 "id": "DOC-AADHAAR",
-                "name": "Aadhaar Card",
+                "name": "Aadhaar Card (UIDAI Age & Address Proof)",
                 "department_verifier": "Unique Identification Authority of India (UIDAI)",
                 "mandatory": True,
                 "accepted_formats": "PDF, JPG, PNG",
                 "max_size_mb": 5,
-                "instructions": "UIDAI identity proof with verifiable QR code."
+                "instructions": "UIDAI identity proof with verifiable QR code showing DOB."
             },
             {
                 "id": "DOC-BANK",
-                "name": "Bank Passbook / Cancelled Cheque",
+                "name": "Bank Passbook / Cancelled Cheque (DBT Linkage)",
                 "department_verifier": "Public Financial Management System (PFMS)",
                 "mandatory": True,
                 "accepted_formats": "PDF, JPG",
                 "max_size_mb": 5,
                 "instructions": "Must show Account Number, IFSC code, and Account Holder Name."
+            },
+            {
+                "id": "DOC-PPO",
+                "name": "Pension Payment Order (PPO) Copy / Death Certificate",
+                "department_verifier": "Central Pension Accounting Office (CPAO)",
+                "mandatory": True,
+                "accepted_formats": "PDF",
+                "max_size_mb": 10,
+                "instructions": "Prior PPO document or legal heir succession certificate."
             }
         ]
     },
@@ -63,12 +66,6 @@ SERVICES_CATALOG = [
         "category": "Land & Revenue",
         "fee": 150,
         "sla_days": 10,
-        "instructions": [
-            "Applicant must possess a registered sale deed or succession decree endorsed by the Sub-Registrar.",
-            "PAN Card will be cross-checked with Income Tax Department records for buyer identity.",
-            "Property survey numbers will be verified against the State Revenue Land Records database.",
-            "Statutory fee of ₹150.00 is payable via Razorpay."
-        ],
         "required_documents": [
             {
                 "id": "DOC-PAN",
@@ -77,7 +74,7 @@ SERVICES_CATALOG = [
                 "mandatory": True,
                 "accepted_formats": "PDF, JPG, PNG",
                 "max_size_mb": 5,
-                "instructions": "PAN card of the property purchaser or heir."
+                "instructions": "PAN card of the property purchaser or legal successor."
             },
             {
                 "id": "DOC-DEED",
@@ -90,12 +87,21 @@ SERVICES_CATALOG = [
             },
             {
                 "id": "DOC-TAX",
-                "name": "Land Revenue Tax Paid Receipt",
-                "department_verifier": "Gram Panchayat / Municipal Revenue Registry",
-                "mandatory": False,
+                "name": "Land Revenue Tax Paid Receipt (Khata Extract)",
+                "department_verifier": "Gram Panchayat / Tahsildar Land Records",
+                "mandatory": True,
                 "accepted_formats": "PDF, JPG",
                 "max_size_mb": 5,
-                "instructions": "Latest land tax receipt for current fiscal year."
+                "instructions": "Latest land tax receipt and village 7/12 extract."
+            },
+            {
+                "id": "DOC-ENCUMB",
+                "name": "Non-Encumbrance Certificate (EC)",
+                "department_verifier": "Inspector General of Registration (IGR)",
+                "mandatory": True,
+                "accepted_formats": "PDF",
+                "max_size_mb": 5,
+                "instructions": "15-year non-encumbrance certificate issued by Sub-Registrar."
             }
         ]
     },
@@ -107,12 +113,6 @@ SERVICES_CATALOG = [
         "category": "Civic Utilities & Permits",
         "fee": 200,
         "sla_days": 7,
-        "instructions": [
-            "Commercial establishments must have an approved building site plan.",
-            "PAN Card of the proprietor will be verified with the Income Tax Department.",
-            "Property assessment will be cross-verified with the Municipal Ward Registry.",
-            "Connection inspection fee of ₹200.00 is processed securely via Razorpay."
-        ],
         "required_documents": [
             {
                 "id": "DOC-PAN",
@@ -134,12 +134,21 @@ SERVICES_CATALOG = [
             },
             {
                 "id": "DOC-PLAN",
-                "name": "Approved Site Plumbing Plan",
+                "name": "Approved Site Plumbing & Drainage Plan",
                 "department_verifier": "Town Planning & Engineering Directorate",
                 "mandatory": True,
                 "accepted_formats": "PDF",
                 "max_size_mb": 10,
                 "instructions": "Architect approved plumbing layout map."
+            },
+            {
+                "id": "DOC-FIRE",
+                "name": "Fire Safety NOC / Trade License",
+                "department_verifier": "Fire & Emergency Services / Civic Health Dept",
+                "mandatory": True,
+                "accepted_formats": "PDF, JPG",
+                "max_size_mb": 5,
+                "instructions": "Current valid fire clearance or civic trade license."
             }
         ]
     }
@@ -166,58 +175,67 @@ DATABASE = {
             "service_id": "SRV-MUN-03",
             "service_name": "Commercial Water Connection NOC",
             "submission_date": "2026-09-01",
-            "current_stage": "FINAL_APPROVAL",
+            "current_stage": "DISPATCH_DIGILOCKER",
             "assigned_officer": "Anil Verma",
             "assigned_officer_id": "OFF-103",
             "missing_documents_count": 0,
             "days_in_current_stage": 1,
             "complexity_score": 2,
             "is_grievance_escalated": False,
-            "status": "PENDING_ESIGN",
+            "status": "COMPLETED",
             "payment_status": "PAID_RAZORPAY",
             "payment_ref": "pay_rzp_92104829",
             "fee_paid": 200,
             "digilocker_verified": True,
             "uploaded_docs": [
-                {"name": "Proprietor PAN Card", "type": "PAN", "filename": "pan_gurpreet_singh.pdf", "verifier": "Income Tax Department", "verified": True, "token": "ITD-PAN-VERIFIED-9821"},
-                {"name": "Property Tax Receipt", "type": "PROPERTY", "filename": "property_tax_ward14.pdf", "verifier": "Municipal Registry", "verified": True, "token": "ULB-PROP-9812"},
-                {"name": "Approved Plumbing Site Plan", "type": "PLAN", "filename": "plumbing_layout_v2.pdf", "verifier": "Town Planning Dept", "verified": True, "token": "TPD-SITE-OK"}
+                {"name": "Business Proprietor PAN Card", "type": "PAN", "filename": "pan_gurpreet_singh.pdf", "verifier": "Income Tax Department (CBDT)", "verified": True, "token": "ITD-PAN-VERIFIED-9821"},
+                {"name": "Property Tax Assessment Receipt", "type": "PROPERTY", "filename": "property_tax_ward14.pdf", "verifier": "Urban Local Body Property Registry", "verified": True, "token": "ULB-PROP-9812"},
+                {"name": "Approved Site Plumbing & Drainage Plan", "type": "PLAN", "filename": "plumbing_layout_v2.pdf", "verifier": "Town Planning Directorate", "verified": True, "token": "TPD-SITE-OK-881"},
+                {"name": "Fire Safety NOC / Trade License", "type": "FIRE", "filename": "fire_noc_2026.pdf", "verifier": "Fire & Emergency Services", "verified": True, "token": "FES-CLEAR-441"}
             ],
             "delay_guidance": {
-                "delay_reason": "All departmental cross-verifications completed. Waiting for Final Officer Digital E-Signature.",
-                "required_action": "None. E-Signed certificate will be dispatched automatically.",
-                "next_step": "Final Officer E-Sign & Certificate Dispatch to Citizen Portal."
+                "delay_reason": "Service completed & officially E-Signed by Municipal Sanctioning Authority.",
+                "required_action": "Download your official certificate from the citizen portal or DigiLocker.",
+                "next_step": "Service Delivered."
             },
-            "esign": None
+            "esign": {
+                "signed_by": "Anil Verma",
+                "designation": "Assistant Municipal Commissioner",
+                "timestamp": "09 Sep 2026, 14:30:00 IST",
+                "cert_hash": "4f88e9102c1109a823",
+                "status": "OFFICIALLY_ISSUED"
+            }
         },
         {
-            "id": "GOV-2026-9042",
-            "applicant_name": "Ananya Mukherjee",
-            "applicant_phone": "9845012345",
-            "department": "REVENUE",
-            "service_id": "SRV-REV-02",
-            "service_name": "Agricultural Land Title Deed Mutation",
-            "submission_date": "2026-08-28",
-            "current_stage": "DOCUMENT_VERIFICATION",
-            "assigned_officer": "Priya Deshmukh",
-            "assigned_officer_id": "OFF-102",
+            "id": "GOV-2026-6312",
+            "applicant_name": "Suresh Natarajan",
+            "applicant_phone": "9876543210",
+            "department": "MUNICIPAL",
+            "service_id": "SRV-MUN-03",
+            "service_name": "Commercial Water Connection NOC",
+            "submission_date": "2026-09-09",
+            "current_stage": "APPLICATION_SUBMITTED",
+            "assigned_officer": "Anil Verma",
+            "assigned_officer_id": "OFF-103",
             "missing_documents_count": 0,
-            "days_in_current_stage": 2,
-            "complexity_score": 3,
+            "days_in_current_stage": 0,
+            "complexity_score": 2,
             "is_grievance_escalated": False,
-            "status": "IN_PROGRESS",
+            "status": "VERIFIED_READY",
             "payment_status": "PAID_RAZORPAY",
-            "payment_ref": "pay_rzp_88410294",
-            "fee_paid": 150,
+            "payment_ref": "pay_rzp_63120194",
+            "fee_paid": 200,
             "digilocker_verified": True,
             "uploaded_docs": [
-                {"name": "Buyer PAN Card", "type": "PAN", "filename": "pan_ananya_mukherjee.pdf", "verifier": "Income Tax Department", "verified": True, "token": "ITD-PAN-VERIFIED-4412"},
-                {"name": "Registered Sale Deed", "type": "DEED", "filename": "title_deed_scan.pdf", "verifier": "State Registration & Stamps", "verified": True, "token": "REG-STAMP-5521"}
+                {"name": "Business Proprietor PAN Card", "type": "PAN", "filename": "pan_suresh_natarajan.pdf", "verifier": "Income Tax Department (CBDT)", "verified": True, "token": "ITD-PAN-VERIFIED-6312"},
+                {"name": "Property Tax Assessment Receipt", "type": "PROPERTY", "filename": "prop_tax_ward7.pdf", "verifier": "Urban Local Body Property Registry", "verified": True, "token": "ULB-PROP-6312"},
+                {"name": "Approved Site Plumbing & Drainage Plan", "type": "PLAN", "filename": "site_plumbing_layout.pdf", "verifier": "Town Planning Directorate", "verified": True, "token": "TPD-SITE-OK-631"},
+                {"name": "Fire Safety NOC / Trade License", "type": "FIRE", "filename": "trade_lic_2026.pdf", "verifier": "Civic Health Dept", "verified": True, "token": "CHD-LIC-631"}
             ],
             "delay_guidance": {
-                "delay_reason": "Cross-verification with State Revenue Land Records database in progress.",
-                "required_action": "No action required.",
-                "next_step": "Officer Review milestone advancement."
+                "delay_reason": "Application freshly submitted with all verified documents. In normal queue.",
+                "required_action": "None. Waiting for departmental officer scrutiny.",
+                "next_step": "Document scrutiny & milestone advancement by officer desk."
             },
             "esign": None
         }
@@ -226,33 +244,6 @@ DATABASE = {
     "audit_logs": [],
     "webhook_logs": []
 }
-
-def cross_verify_with_department(doc_type: str, doc_name: str, applicant_name: str):
-    """
-    Simulates real-time API call to Indian Government Departments
-    e.g. Income Tax PAN Database, UIDAI Aadhaar, State Land Revenue Records.
-    """
-    if "PAN" in doc_type.upper() or "PAN" in doc_name.upper():
-        return {
-            "department": "Income Tax Department (CBDT / NSDL)",
-            "status": "AUTHENTIC_VERIFIED",
-            "message": f"PAN record matched with Income Tax Database for {applicant_name}. Status: ACTIVE.",
-            "verification_token": f"ITD-PAN-{hashlib.md5(applicant_name.encode()).hexdigest()[:8].upper()}"
-        }
-    elif "AADHAAR" in doc_type.upper() or "AADHAAR" in doc_name.upper():
-        return {
-            "department": "Unique Identification Authority of India (UIDAI)",
-            "status": "AUTHENTIC_VERIFIED",
-            "message": f"UIDAI e-KYC record validated via DigiLocker OTP bridge for {applicant_name}.",
-            "verification_token": f"UIDAI-KYC-{hashlib.md5((applicant_name+'uidai').encode()).hexdigest()[:8].upper()}"
-        }
-    else:
-        return {
-            "department": "State Government Directorate / Municipal Registry",
-            "status": "AUTHENTIC_VERIFIED",
-            "message": f"Endorsement authenticity confirmed in official registry for {doc_name}.",
-            "verification_token": f"SGR-DOC-{hashlib.md5(doc_name.encode()).hexdigest()[:8].upper()}"
-        }
 
 def enrich_file_with_prediction(file_obj):
     officer = next((o for o in DATABASE["officers"] if o["id"] == file_obj.get("assigned_officer_id")), None)
