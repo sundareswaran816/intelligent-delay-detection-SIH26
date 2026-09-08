@@ -1,401 +1,324 @@
 {% extends "base.html" %}
 
-{% block title %}Citizen Service Application & Verification Wizard{% endblock %}
+{% block title %}Citizen Service Application - Guided Wizard{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="max-w-4xl mx-auto space-y-6">
     
-    <!-- Wizard Step Progress Bar -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between">
-            <!-- Step 1 -->
+    <!-- Step Tracker Ribbon -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between text-center">
+            <!-- Step 1: Instructions -->
             <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(1)">
-                <div id="step-badge-1" class="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
-                    1
-                </div>
-                <div class="hidden sm:block">
-                    <div class="text-xs font-bold text-slate-900">Select Service</div>
-                    <div class="text-[10px] text-slate-400">Step 1 of 6</div>
-                </div>
+                <div id="step-badge-1" class="w-7 h-7 rounded-full bg-orange-600 text-white flex items-center justify-center font-black text-xs shadow-sm">1</div>
+                <span class="text-xs font-bold text-slate-800 hidden sm:inline">1. Instructions</span>
             </div>
-            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-1"></div>
+            <div class="h-0.5 w-6 sm:w-12 bg-slate-200"></div>
 
-            <!-- Step 2 -->
+            <!-- Step 2: Service & Requirements -->
             <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(2)">
-                <div id="step-badge-2" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
-                    2
-                </div>
-                <div class="hidden sm:block">
-                    <div class="text-xs font-bold text-slate-600">Checklist</div>
-                    <div class="text-[10px] text-slate-400">Step 2 of 6</div>
-                </div>
+                <div id="step-badge-2" class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">2</div>
+                <span class="text-xs font-bold text-slate-600 hidden sm:inline">2. Required Docs</span>
             </div>
-            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-2"></div>
+            <div class="h-0.5 w-6 sm:w-12 bg-slate-200"></div>
 
-            <!-- Step 3 -->
+            <!-- Step 3: Upload Docs -->
             <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(3)">
-                <div id="step-badge-3" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
-                    3
-                </div>
-                <div class="hidden sm:block">
-                    <div class="text-xs font-bold text-slate-600">Upload Files</div>
-                    <div class="text-[10px] text-slate-400">Step 3 of 6</div>
-                </div>
+                <div id="step-badge-3" class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">3</div>
+                <span class="text-xs font-bold text-slate-600 hidden sm:inline">3. Upload</span>
             </div>
-            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-3"></div>
+            <div class="h-0.5 w-6 sm:w-12 bg-slate-200"></div>
 
-            <!-- Step 4 -->
+            <!-- Step 4: Razorpay Payment -->
             <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(4)">
-                <div id="step-badge-4" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
-                    4
-                </div>
-                <div class="hidden sm:block">
-                    <div class="text-xs font-bold text-slate-600">DigiLocker KYC</div>
-                    <div class="text-[10px] text-slate-400">Step 4 of 6</div>
-                </div>
+                <div id="step-badge-4" class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">4</div>
+                <span class="text-xs font-bold text-slate-600 hidden sm:inline">4. Razorpay</span>
             </div>
-            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-4"></div>
+            <div class="h-0.5 w-6 sm:w-12 bg-slate-200"></div>
 
-            <!-- Step 5 -->
+            <!-- Step 5: Department Cross-Verification -->
             <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(5)">
-                <div id="step-badge-5" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
-                    5
-                </div>
-                <div class="hidden sm:block">
-                    <div class="text-xs font-bold text-slate-600">Check & Correct</div>
-                    <div class="text-[10px] text-slate-400">Step 5 of 6</div>
-                </div>
-            </div>
-            <div class="h-0.5 w-8 md:w-16 bg-slate-200" id="step-line-5"></div>
-
-            <!-- Step 6 -->
-            <div class="flex items-center gap-2 cursor-pointer" onclick="goToStep(6)">
-                <div id="step-badge-6" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">
-                    6
-                </div>
-                <div class="hidden sm:block">
-                    <div class="text-xs font-bold text-slate-600">Payment & Submit</div>
-                    <div class="text-[10px] text-slate-400">Step 6 of 6</div>
-                </div>
+                <div id="step-badge-5" class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-black text-xs">5</div>
+                <span class="text-xs font-bold text-slate-600 hidden sm:inline">5. Dept Check</span>
             </div>
         </div>
     </div>
 
-    <!-- MAIN FORM & STEPS CONTAINER -->
-    <form id="wizardForm" action="/citizen/wizard/complete" method="POST" enctype="multipart/form-data">
+    <!-- MAIN WIZARD CONTAINER -->
+    <form id="wizardForm" action="/citizen/wizard/complete" method="POST">
         <input type="hidden" name="selected_service_id" id="inputServiceId" value="SRV-PENSION-01">
         <input type="hidden" name="applicant_name" id="inputApplicantName" value="Citizen User">
         <input type="hidden" name="applicant_phone" id="inputApplicantPhone" value="9876543210">
-        <input type="hidden" name="digilocker_authenticated" id="inputDigiLockerAuth" value="true">
-        <input type="hidden" name="has_reuploaded" id="inputHasReuploaded" value="false">
+        <input type="hidden" name="payment_ref" id="inputPaymentRef" value="pay_rzp_demo9821">
 
-        <!-- ================= STEP 1: SERVICE SELECTION (Spec §3) ================= -->
+        <!-- ================= STEP 1: INSTRUCTIONS PAGE (Displayed First) ================= -->
         <div id="step-1" class="wizard-step bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
             <div class="border-b border-slate-100 pb-4">
-                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 2: Service Selection</span>
-                <h2 class="text-2xl font-black text-slate-900 mt-1">Select Required Government Service</h2>
-                <p class="text-xs text-slate-500">Choose the government scheme, certificate, or permit you wish to apply for.</p>
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 1 • Instructions & Guidelines</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">General Application & Verification Instructions</h2>
+                <p class="text-xs text-slate-500">Please read the statutory guidelines carefully before proceeding to service selection and document upload.</p>
             </div>
 
-            <!-- Applicant Basic Info Inputs -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-orange-50/50 p-4 rounded-xl border border-orange-200">
+            <!-- Instructions List Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div class="p-4 bg-orange-50/50 rounded-xl border border-orange-200 space-y-2">
+                    <div class="flex items-center gap-2 text-orange-800 font-bold">
+                        <i data-lucide="file-check" class="w-4 h-4"></i> Mandatory Identity (PAN & Aadhaar)
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        Your uploaded PAN Card will be cross-verified in real-time with the <strong>Income Tax Department (CBDT)</strong> database to ensure authenticity.
+                    </p>
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <div class="flex items-center gap-2 text-slate-800 font-bold">
+                        <i data-lucide="shield" class="w-4 h-4"></i> DigiLocker KYC Matching
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        Documents are validated against UIDAI and State registries to eliminate manual submission errors and delay risks.
+                    </p>
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <div class="flex items-center gap-2 text-slate-800 font-bold">
+                        <i data-lucide="credit-card" class="w-4 h-4"></i> Razorpay Payment Gateway
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        Applicable government sanction fees are processed securely through Razorpay supporting UPI, Cards, NetBanking, and QR codes.
+                    </p>
+                </div>
+
+                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2">
+                    <div class="flex items-center gap-2 text-emerald-800 font-bold">
+                        <i data-lucide="pen-tool" class="w-4 h-4"></i> Officer Digital E-Sign Delivery
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        Approved certificates are cryptographically E-Signed by the sanctioning authority and dispatched directly to your citizen portal with SMS/WhatsApp alerts.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Applicant Basic Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Applicant Full Name *</label>
                     <input type="text" id="wizardNameField" required value="Suresh Natarajan"
-                           class="w-full px-3 py-2 text-xs font-semibold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none bg-white">
+                           class="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number (OTP Verified) *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Registered Phone (for WhatsApp/SMS Alerts) *</label>
                     <input type="tel" id="wizardPhoneField" required value="9876543210"
-                           class="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none bg-white font-mono">
+                           class="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white font-mono">
                 </div>
-            </div>
-
-            <!-- Service Selection Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% for srv in services %}
-                    <div onclick="selectService('{{ srv.id }}', '{{ srv.name }}', {{ srv.fee }}, {{ srv.sla_days }})" 
-                         id="service-card-{{ srv.id }}"
-                         class="service-card cursor-pointer p-5 rounded-xl border-2 {% if loop.first %}border-orange-500 bg-orange-50/50 ring-2 ring-orange-200{% else %}border-slate-200 bg-white hover:border-slate-300{% endif %} transition space-y-3">
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-bold px-2 py-0.5 bg-orange-100 text-orange-800 rounded border border-orange-200">
-                                {{ srv.category }}
-                            </span>
-                            <span class="text-xs font-black text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
-                                Fee: {% if srv.fee == 0 %}FREE{% else %}₹{{ srv.fee }}{% endif %}
-                            </span>
-                        </div>
-                        <h3 class="font-black text-base text-slate-900">{{ srv.name }}</h3>
-                        <p class="text-xs text-slate-600 line-clamp-2">{{ srv.description }}</p>
-                        <div class="text-[11px] text-slate-500 flex items-center justify-between pt-2 border-t border-slate-100 font-medium">
-                            <span>Dept: <strong class="text-slate-800">{{ srv.department }}</strong></span>
-                            <span>Standard SLA: <strong class="text-orange-700">{{ srv.sla_days }} Days</strong></span>
-                        </div>
-                    </div>
-                {% endfor %}
             </div>
 
             <div class="flex justify-end pt-2">
-                <button type="button" onclick="goToStep(2)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
-                    Continue to Document Checklist <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <button type="button" onclick="goToStep(2)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-xs transition shadow flex items-center gap-2">
+                    I Have Read Instructions • View Required Documents <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
 
-        <!-- ================= STEP 2: DOCUMENT REQUIREMENTS & GUIDELINES (Spec §4) ================= -->
+        <!-- ================= STEP 2: REQUIRED DOCUMENTS SHOWN (Displayed After Instructions) ================= -->
         <div id="step-2" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
             <div class="border-b border-slate-100 pb-4">
-                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 3: Instructions & Document Checklist</span>
-                <h2 class="text-2xl font-black text-slate-900 mt-1">Required Documents & Upload Guidelines</h2>
-                <p class="text-xs text-slate-500">Please review the checklist and accepted formats before uploading to avoid rejection delays.</p>
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 2 • Service Selection & Required Documents</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Select Service & View Required Documents Checklist</h2>
+                <p class="text-xs text-slate-500">Choose your government service to dynamically inspect the mandatory document checklist and department verifiers.</p>
             </div>
 
-            <div id="checklistContainer" class="space-y-4">
-                {% for doc in services[0].required_documents %}
-                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-xs text-slate-900 flex items-center gap-2">
-                                <i data-lucide="file-check-2" class="w-4 h-4 text-orange-600"></i> {{ doc.name }}
-                            </span>
-                            <span class="text-[10px] font-black px-2 py-0.5 rounded {% if doc.mandatory %}bg-rose-100 text-rose-800 border border-rose-200{% else %}bg-slate-200 text-slate-700{% endif %}">
-                                {% if doc.mandatory %}MANDATORY{% else %}OPTIONAL{% endif %}
-                            </span>
+            <!-- Service Selection Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {% for srv in services %}
+                    <div onclick="selectService('{{ srv.id }}', '{{ srv.name }}', {{ srv.fee }}, '{{ srv.department }}')" 
+                         id="service-card-{{ srv.id }}"
+                         class="service-card cursor-pointer p-4 rounded-xl border-2 {% if loop.first %}border-orange-500 bg-orange-50/50 ring-2 ring-orange-200{% else %}border-slate-200 bg-white hover:border-slate-300{% endif %} transition space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-bold px-2 py-0.5 bg-orange-100 text-orange-800 rounded">{{ srv.category }}</span>
+                            <span class="text-xs font-black text-emerald-700">₹{{ srv.fee }}</span>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 font-medium">
-                            <div><strong>Accepted Formats:</strong> {{ doc.accepted_formats }} (Max {{ doc.max_size_mb }}MB)</div>
-                            <div><strong>Validity:</strong> {{ doc.validity }}</div>
-                        </div>
-                        <p class="text-xs text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200 font-medium">
-                            💡 <strong>Instruction:</strong> {{ doc.instructions }}
-                        </p>
+                        <h4 class="font-black text-xs text-slate-900 leading-snug">{{ srv.name }}</h4>
+                        <div class="text-[10px] text-slate-500 font-medium">SLA: {{ srv.sla_days }} Days</div>
                     </div>
                 {% endfor %}
             </div>
 
+            <!-- Dynamic Required Documents Checklist -->
+            <div class="space-y-3 pt-2">
+                <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider">Required Document Checklist for Selected Service</h3>
+                <div id="checklistContainer" class="space-y-3">
+                    {% for doc in services[0].required_documents %}
+                        <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1.5 text-xs">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="file-text" class="w-4 h-4 text-orange-600"></i> {{ doc.name }}
+                                </span>
+                                <span class="text-[10px] font-black px-2 py-0.5 bg-rose-100 text-rose-800 rounded">MANDATORY</span>
+                            </div>
+                            <div class="text-slate-600 font-medium text-[11px]">
+                                <strong>Department Verifier:</strong> <span class="text-blue-700">{{ doc.department_verifier }}</span>
+                            </div>
+                            <p class="text-slate-500 text-[11px] bg-white p-2 rounded border border-slate-200">
+                                💡 <strong>Instruction:</strong> {{ doc.instructions }} (Accepted: {{ doc.accepted_formats }}, Max {{ doc.max_size_mb }}MB)
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
             <div class="flex justify-between pt-2">
-                <button type="button" onclick="goToStep(1)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
-                    ← Back
-                </button>
-                <button type="button" onclick="goToStep(3)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
-                    Proceed to Upload <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <button type="button" onclick="goToStep(1)" class="px-5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">← Back to Instructions</button>
+                <button type="button" onclick="goToStep(3)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-xs transition shadow flex items-center gap-2">
+                    Proceed to Upload Files <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
 
-        <!-- ================= STEP 3: DOCUMENT UPLOAD (Spec §5) ================= -->
+        <!-- ================= STEP 3: UPLOAD DOCS & VALIDATION ================= -->
         <div id="step-3" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
             <div class="border-b border-slate-100 pb-4">
-                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 4: Document Upload</span>
-                <h2 class="text-2xl font-black text-slate-900 mt-1">Upload Required Documents</h2>
-                <p class="text-xs text-slate-500">Attach copies of your files. Basic format and readability validation will be performed.</p>
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 3 • Document Upload & Instant Validation</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Attach Required Verification Documents</h2>
+                <p class="text-xs text-slate-500">Upload clean copies of your documents. System executes real-time format, DPI, and readability validation.</p>
             </div>
 
             <div class="space-y-4">
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
-                    <label class="block text-xs font-bold text-slate-800">1. Identity Proof (Aadhaar Card) *</label>
-                    <div class="flex items-center gap-3">
-                        <input type="file" id="fileAadhaar" class="text-xs text-slate-600 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
-                        <span class="text-xs text-emerald-700 font-bold" id="statusAadhaar">✓ Valid format (PDF/JPG)</span>
-                    </div>
+                <!-- PAN Upload -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                    <label class="block text-xs font-bold text-slate-800 flex justify-between">
+                        <span>1. PAN Card (Cross-verified with Income Tax Dept) *</span>
+                        <span class="text-[11px] text-emerald-700 font-bold" id="statusPan">✓ File Selected</span>
+                    </label>
+                    <input type="file" id="filePan" class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-100 file:text-orange-800">
                 </div>
 
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
-                    <label class="block text-xs font-bold text-slate-800">2. Service Specific Document / Certificate *</label>
-                    <div class="flex items-center gap-3">
-                        <input type="file" id="fileServiceDoc" class="text-xs text-slate-600 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
-                        <span class="text-xs text-emerald-700 font-bold">✓ Ready for DigiLocker Check</span>
-                    </div>
+                <!-- Aadhaar / Deed Upload -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                    <label class="block text-xs font-bold text-slate-800 flex justify-between">
+                        <span>2. Supporting Proof / Title Document *</span>
+                        <span class="text-[11px] text-emerald-700 font-bold">✓ Ready for Auto-Check</span>
+                    </label>
+                    <input type="file" id="fileProof" class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-100 file:text-orange-800">
                 </div>
             </div>
 
+            <!-- Instant Validation Result Badge -->
+            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1.5 text-emerald-900">
+                <div class="font-bold flex items-center gap-1.5">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Smart Validation Passed
+                </div>
+                <p class="text-[11px] text-emerald-700 font-medium">All uploaded files satisfy resolution, aspect-ratio, and readable text OCR parameters.</p>
+            </div>
+
             <div class="flex justify-between pt-2">
-                <button type="button" onclick="goToStep(2)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
-                    ← Back
-                </button>
-                <button type="button" onclick="goToStep(4)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
-                    Continue to DigiLocker Verification <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <button type="button" onclick="goToStep(2)" class="px-5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">← Back</button>
+                <button type="button" onclick="goToStep(4)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-xs transition shadow flex items-center gap-2">
+                    Proceed to Razorpay Payment <i data-lucide="credit-card" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
 
-        <!-- ================= STEP 4: DIGILOCKER VERIFICATION (Spec §6) ================= -->
+        <!-- ================= STEP 4: RAZORPAY PAYMENT MODAL/SCREEN ================= -->
         <div id="step-4" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
             <div class="border-b border-slate-100 pb-4">
-                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 5: Digital Record Verification</span>
-                <h2 class="text-2xl font-black text-slate-900 mt-1">DigiLocker Document Authentication</h2>
-                <p class="text-xs text-slate-500">Authenticate with National DigiLocker repository to auto-verify your credentials against trusted records.</p>
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Step 4 • Government Fee Payment</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Razorpay Secure Payment Gateway</h2>
+                <p class="text-xs text-slate-500">Pay the statutory processing fee to initiate official departmental cross-verification.</p>
             </div>
 
-            <div class="p-6 bg-gradient-to-br from-orange-50/60 to-amber-50/60 rounded-2xl border border-orange-200 space-y-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-orange-600 text-white font-black flex items-center justify-center text-xs shadow-sm">
-                            DL
-                        </div>
-                        <div>
-                            <div class="font-black text-slate-900 text-sm">DigiLocker Secure Document Wallet</div>
-                            <div class="text-[11px] text-slate-500 font-medium">Ministry of Electronics and Information Technology (MeitY)</div>
-                        </div>
+            <!-- Razorpay Checkout Card -->
+            <div class="bg-gradient-to-br from-blue-900 to-indigo-950 text-white p-6 rounded-2xl shadow-xl space-y-4 max-w-md mx-auto">
+                <div class="flex justify-between items-center border-b border-blue-800/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="font-black tracking-tight text-blue-400">Razorpay</span>
+                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded">Trusted Gov Gateway</span>
                     </div>
-                    <span class="px-2.5 py-1 bg-orange-100 text-orange-800 text-[11px] font-black rounded-full border border-orange-300">
-                        Authenticated
-                    </span>
+                    <span class="font-mono text-xs text-slate-300">TXN-2026-9812</span>
                 </div>
 
-                <div class="bg-white p-4 rounded-xl border border-orange-100 space-y-3">
-                    <div class="text-xs text-slate-700 font-semibold">Authenticated Identity: <strong class="text-slate-900 font-black">Suresh Natarajan</strong> (UIDAI: ••••••••8819)</div>
-                    <div class="text-xs text-slate-700 font-bold">Synced DigiLocker Records:</div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
-                            <span class="font-medium">UIDAI Aadhaar Record</span>
-                            <span class="text-emerald-700 font-black">✓ Verified</span>
-                        </div>
-                        <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
-                            <span class="font-medium">Departmental Certificate Proof</span>
-                            <span class="text-amber-600 font-black">⚠️ Needs Match</span>
-                        </div>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-slate-300">Government Sanction Fee:</span>
+                        <strong class="font-mono text-sm" id="razorpayFeeText">₹50.00</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-300">Portal & DigiLocker Verifier:</span>
+                        <span class="text-emerald-400 font-bold">FREE (₹0.00)</span>
+                    </div>
+                    <div class="flex justify-between pt-2 border-t border-blue-800 text-sm font-black">
+                        <span>Total Payable:</span>
+                        <span class="text-amber-400" id="razorpayTotalText">₹50.00</span>
                     </div>
                 </div>
+
+                <!-- Payment Methods -->
+                <div class="space-y-2 pt-2">
+                    <label class="block text-[11px] text-blue-300 font-bold">Select Payment Mode</label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="p-2.5 bg-blue-950/80 border border-blue-700 rounded-lg flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="razorpay_mode" checked class="text-blue-600">
+                            <span>UPI / QR Scan</span>
+                        </label>
+                        <label class="p-2.5 bg-blue-950/80 border border-blue-700 rounded-lg flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="razorpay_mode" class="text-blue-600">
+                            <span>Debit / Credit Card</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="button" onclick="executeRazorpayPay()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4"></i> Pay <span id="btnPayAmount">₹50.00</span> via Razorpay
+                </button>
             </div>
 
             <div class="flex justify-between pt-2">
-                <button type="button" onclick="goToStep(3)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
-                    ← Back
-                </button>
-                <button type="button" onclick="runDocumentCorrectnessCheck()" class="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
-                    Execute Smart Correctness Check <i data-lucide="zap" class="w-4 h-4"></i>
-                </button>
+                <button type="button" onclick="goToStep(3)" class="px-5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">← Back</button>
             </div>
         </div>
 
-        <!-- ================= STEP 5: DOCUMENT CORRECTNESS & ACTIONABLE RE-UPLOAD (Spec §7 & §8) ================= -->
+        <!-- ================= STEP 5: DEPARTMENT CROSS-VERIFICATION ================= -->
         <div id="step-5" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
             <div class="border-b border-slate-100 pb-4">
-                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 6: Smart Document Verification & Correction</span>
-                <h2 class="text-2xl font-black text-slate-900 mt-1">Document Correctness Verification Results</h2>
-                <p class="text-xs text-slate-500">Civiora Smart Verification Engine compares your uploaded files with DigiLocker and SLA rules.</p>
+                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 5 • Official Departmental Cross-Verification</span>
+                <h2 class="text-2xl font-black text-slate-900 mt-1">Cross-Checking Documents with Government Authorities</h2>
+                <p class="text-xs text-slate-500">Checking uploaded PAN with Income Tax Database and Aadhaar with UIDAI Registry.</p>
             </div>
 
-            <div class="space-y-4">
-                <!-- Doc 1: Aadhaar -->
-                <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/60 flex items-center justify-between">
-                    <div class="space-y-1">
-                        <div class="font-bold text-xs text-slate-900 flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Aadhaar Identity Record
-                        </div>
-                        <p class="text-[11px] text-emerald-800 font-medium">Name, DOB, and biometric token successfully verified with UIDAI.</p>
-                    </div>
-                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-black rounded-full border border-emerald-300">
-                        ✅ Verified
-                    </span>
-                </div>
-
-                <!-- Doc 2: Service Proof with Problem & Actionable Instructions (Spec §8) -->
-                <div id="reuploadSection" class="p-5 rounded-xl border-2 border-rose-200 bg-rose-50/50 space-y-4">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <div class="font-bold text-xs text-rose-900 flex items-center gap-2">
-                                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i> Supporting Certificate / Deed Proof
-                            </div>
-                            <span class="text-[11px] font-bold text-rose-700 block mt-1">Status: ⚠️ Needs Attention / Re-upload Required</span>
-                        </div>
-                        <span class="px-3 py-1 bg-rose-100 text-rose-800 text-[11px] font-black rounded-full border border-rose-300">
-                            Action Required
-                        </span>
-                    </div>
-
-                    <div class="p-3 bg-white rounded-lg border border-rose-100 text-xs space-y-1">
-                        <span class="font-bold text-rose-900">What is wrong?</span>
-                        <p class="text-slate-600 font-medium">Uploaded document page 2 seal or municipal endorsement is blurred and could not be verified automatically.</p>
-                    </div>
-
-                    <div class="p-3 bg-white rounded-lg border border-rose-100 text-xs space-y-1">
-                        <span class="font-bold text-slate-900">What should you do?</span>
-                        <p class="text-slate-600 font-medium">Please upload a clearer scanned copy of your certificate ensuring the authority seal and date are crisp.</p>
-                    </div>
-
-                    <div class="pt-2 flex flex-col sm:flex-row items-center gap-3">
-                        <input type="file" id="reuploadFileInput" class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-rose-100 file:text-rose-800 hover:file:bg-rose-200">
-                        <button type="button" onclick="performReupload()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-black shadow transition flex items-center gap-1.5">
-                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Re-upload & Verify
-                        </button>
-                    </div>
-                </div>
-
-                <div id="reuploadSuccessCard" class="hidden p-4 rounded-xl border border-emerald-200 bg-emerald-50/60 flex items-center justify-between">
-                    <div class="space-y-1">
-                        <div class="font-bold text-xs text-slate-900 flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Supporting Certificate / Deed Proof (Re-uploaded)
-                        </div>
-                        <p class="text-[11px] text-emerald-800 font-medium">Corrected copy validated successfully. Zero pending document flags.</p>
-                    </div>
-                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-black rounded-full border border-emerald-300">
-                        ✅ Verified
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex justify-between pt-2">
-                <button type="button" onclick="goToStep(4)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
-                    ← Back
-                </button>
-                <button type="button" id="btnProceedToPayment" onclick="goToStep(6)" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center gap-2">
-                    Proceed to Payment <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- ================= STEP 6: PAYMENT & SUBMISSION (Spec §9 & §10) ================= -->
-        <div id="step-6" class="wizard-step hidden bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-            <div class="border-b border-slate-100 pb-4">
-                <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Step 7: Government Fee Payment</span>
-                <h2 class="text-2xl font-black text-slate-900 mt-1">Payment & Application Finalization</h2>
-                <p class="text-xs text-slate-500">All required documents have been verified. Pay the applicable service fee to generate your tracking ID.</p>
-            </div>
-
-            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-3">
-                <div class="flex justify-between items-center border-b border-slate-200 pb-2.5 text-xs">
-                    <span class="text-slate-500 font-medium">Selected Service:</span>
-                    <span class="font-bold text-slate-800" id="paymentServiceName">Senior Citizen Family Pension Sanction</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-slate-200 pb-2.5 text-xs">
-                    <span class="text-slate-500 font-medium">Government Sanction Fee:</span>
-                    <span class="font-bold text-slate-800" id="paymentGovFee">₹50.00</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-slate-200 pb-2.5 text-xs">
-                    <span class="text-slate-500 font-medium">DigiLocker Verification & Portal Processing:</span>
-                    <span class="font-black text-emerald-700">FREE (Gov Subsidized)</span>
-                </div>
-                <div class="flex justify-between items-center pt-1 text-base font-black text-slate-900">
-                    <span>Total Amount Payable:</span>
-                    <span class="text-orange-700" id="paymentTotal">₹50.00</span>
-                </div>
-            </div>
-
+            <!-- Verification Progress Stream -->
             <div class="space-y-3">
-                <label class="block text-xs font-bold text-slate-700">Select Payment Method</label>
-                <div class="grid grid-cols-3 gap-3">
-                    <label class="cursor-pointer p-3 border-2 border-orange-500 bg-orange-50/50 rounded-xl flex items-center justify-center text-xs font-bold text-slate-800 gap-2">
-                        <input type="radio" name="payment_method" value="UPI" checked class="text-orange-600">
-                        UPI / QR Code
-                    </label>
-                    <label class="cursor-pointer p-3 border-2 border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center text-xs font-bold text-slate-800 gap-2">
-                        <input type="radio" name="payment_method" value="CARD" class="text-orange-600">
-                        Debit / Credit Card
-                    </label>
-                    <label class="cursor-pointer p-3 border-2 border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center text-xs font-bold text-slate-800 gap-2">
-                        <input type="radio" name="payment_method" value="NETBANKING" class="text-orange-600">
-                        Net Banking
-                    </label>
+                <!-- Check 1: Income Tax PAN -->
+                <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/70 space-y-1.5 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Income Tax Department (ITD / NSDL) Cross-Check
+                        </span>
+                        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-black rounded-full text-[10px]">AUTHENTIC VERIFIED</span>
+                    </div>
+                    <p class="text-slate-600 font-medium text-[11px]">
+                        PAN card matched with Income Tax Database for <strong id="panMatchedApplicantName">Suresh Natarajan</strong>. Status: <strong>ACTIVE & VALID</strong>.
+                    </p>
+                    <div class="font-mono text-[10px] text-emerald-800">Verification Token: ITD-PAN-VERIFIED-98214</div>
+                </div>
+
+                <!-- Check 2: UIDAI Aadhaar -->
+                <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/70 space-y-1.5 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> UIDAI e-KYC Identity Verification
+                        </span>
+                        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-black rounded-full text-[10px]">KYC SYNCED</span>
+                    </div>
+                    <p class="text-slate-600 font-medium text-[11px]">
+                        Aadhaar biographical data confirmed via DigiLocker token. Zero mismatch detected.
+                    </p>
+                    <div class="font-mono text-[10px] text-emerald-800">Verification Token: UIDAI-KYC-AUTHENTIC-4412</div>
                 </div>
             </div>
 
-            <div class="flex justify-between pt-2">
-                <button type="button" onclick="goToStep(5)" class="px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg">
-                    ← Back
-                </button>
-                <button type="submit" class="px-8 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-xl text-xs transition shadow-md flex items-center gap-2">
-                    <i data-lucide="lock" class="w-4 h-4"></i> Complete Payment & Submit Application
+            <!-- Submission Confirmation -->
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+                <button type="submit" class="px-8 py-3 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-xs transition shadow-lg flex items-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> Finalize Application Submission & Transmit to Officer
                 </button>
             </div>
         </div>
@@ -404,14 +327,14 @@
 
 <script>
     let currentStep = 1;
-    let selectedService = { id: 'SRV-PENSION-01', name: 'Senior Citizen Family Pension Sanction', fee: 50, sla: 14 };
+    let selectedService = { id: 'SRV-PENSION-01', name: 'Senior Citizen Family Pension Sanction', fee: 50, dept: 'PENSION' };
 
-    function selectService(id, name, fee, sla) {
-        selectedService = { id, name, fee, sla };
+    function selectService(id, name, fee, dept) {
+        selectedService = { id, name, fee, dept };
         document.getElementById('inputServiceId').value = id;
-        document.getElementById('paymentServiceName').textContent = name;
-        document.getElementById('paymentGovFee').textContent = fee === 0 ? 'FREE' : '₹' + fee + '.00';
-        document.getElementById('paymentTotal').textContent = fee === 0 ? 'FREE' : '₹' + fee + '.00';
+        document.getElementById('razorpayFeeText').textContent = '₹' + fee + '.00';
+        document.getElementById('razorpayTotalText').textContent = '₹' + fee + '.00';
+        document.getElementById('btnPayAmount').textContent = '₹' + fee + '.00';
 
         document.querySelectorAll('.service-card').forEach(c => {
             c.classList.remove('border-orange-500', 'bg-orange-50/50', 'ring-2', 'ring-orange-200');
@@ -428,8 +351,9 @@
         const phoneVal = document.getElementById('wizardPhoneField').value;
         document.getElementById('inputApplicantName').value = nameVal;
         document.getElementById('inputApplicantPhone').value = phoneVal;
+        document.getElementById('panMatchedApplicantName').textContent = nameVal;
 
-        for (let i = 1; i <= 6; i++) {
+        for (let i = 1; i <= 5; i++) {
             const el = document.getElementById('step-' + i);
             if (el) el.classList.add('hidden');
             const badge = document.getElementById('step-badge-' + i);
@@ -448,14 +372,9 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function runDocumentCorrectnessCheck() {
+    function executeRazorpayPay() {
+        // Simulates Razorpay transaction success
         goToStep(5);
-    }
-
-    function performReupload() {
-        document.getElementById('reuploadSection').classList.add('hidden');
-        document.getElementById('reuploadSuccessCard').classList.remove('hidden');
-        document.getElementById('inputHasReuploaded').value = 'true';
     }
 </script>
 {% endblock %}

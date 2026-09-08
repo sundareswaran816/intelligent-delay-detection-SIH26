@@ -17,7 +17,7 @@
             <h1 class="text-2xl font-black text-slate-900 mt-1">
                 {{ current_officer.name }} • <span class="text-orange-600">{{ current_officer.department }} Department</span>
             </h1>
-            <p class="text-xs text-slate-500 mt-0.5">{{ current_officer.role }} • Sequential step-by-step file progression desk.</p>
+            <p class="text-xs text-slate-500 mt-0.5">{{ current_officer.designation }} • Document scrutiny, verification & Digital E-Sign desk.</p>
         </div>
 
         <!-- Officer Switcher -->
@@ -36,48 +36,15 @@
         </div>
     </div>
 
-    <!-- Key Department Queue Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-500 uppercase">Active Files in {{ current_officer.department }}</span>
-            <div class="text-2xl font-black text-slate-900 mt-1">{{ files|length }} Files</div>
-            <span class="text-[11px] text-slate-500 font-medium">Restricted to your jurisdiction</span>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-rose-600 uppercase">Critical Delay Risk</span>
-            <div class="text-2xl font-black text-rose-600 mt-1">
-                {{ files|selectattr('prediction.risk_category', 'equalto', 'CRITICAL')|list|length }} Cases
-            </div>
-            <span class="text-[11px] text-rose-500 font-medium">Requires immediate advancement</span>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-amber-600 uppercase">Moderate Delay Risk</span>
-            <div class="text-2xl font-black text-amber-600 mt-1">
-                {{ files|selectattr('prediction.risk_category', 'equalto', 'MODERATE')|list|length }} Cases
-            </div>
-            <span class="text-[11px] text-amber-600 font-medium">In workflow progression</span>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-emerald-700 uppercase">Completed / On Track</span>
-            <div class="text-2xl font-black text-emerald-700 mt-1">
-                {{ files|selectattr('prediction.risk_category', 'equalto', 'LOW')|list|length }} Cases
-            </div>
-            <span class="text-[11px] text-emerald-600 font-medium">Within standard SLA</span>
-        </div>
-    </div>
-
     <!-- AI-Prioritized Departmental File Queue Table -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div>
                 <h2 class="text-base font-black text-slate-900">AI-Prioritized Work Queue ({{ current_officer.department }})</h2>
-                <p class="text-xs text-slate-500">Files advance sequentially through each stage upon official review.</p>
+                <p class="text-xs text-slate-500">Inspect uploaded citizen documents, verify authenticity tokens, and execute Digital E-Signatures.</p>
             </div>
             <span class="px-3 py-1 bg-orange-100 text-orange-900 text-xs font-bold rounded-full border border-orange-200">
-                Sorted by AI Delay Risk
+                Department Isolated Queue
             </span>
         </div>
 
@@ -90,18 +57,15 @@
                             <th class="p-4">Applicant</th>
                             <th class="p-4">Current Stage</th>
                             <th class="p-4">AI Delay Risk</th>
-                            <th class="p-4">Predicted ETA</th>
-                            <th class="p-4">Bottleneck Stage</th>
-                            <th class="p-4 text-right">Action / Workflow</th>
+                            <th class="p-4">Uploaded Documents</th>
+                            <th class="p-4 text-right">Workflow & E-Sign Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-xs">
                         {% for f in files %}
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="p-4">
-                                    <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                                        {{ f.id }}
-                                    </span>
+                                    <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">{{ f.id }}</span>
                                     <div class="font-bold text-slate-900 mt-1 text-sm">{{ f.service_name }}</div>
                                     <span class="text-[11px] text-orange-700 font-semibold">{{ f.department }}</span>
                                 </td>
@@ -119,37 +83,33 @@
                                         <div class="flex items-center gap-1.5 text-rose-600 font-black text-sm">
                                             <i data-lucide="alert-triangle" class="w-4 h-4"></i> {{ f.prediction.delay_risk_pct }}% (Critical)
                                         </div>
-                                        <span class="text-[11px] text-rose-500 font-medium block">Urgent Action Required</span>
-                                    {% elif f.prediction.risk_category == 'MODERATE' %}
-                                        <div class="flex items-center gap-1.5 text-amber-600 font-black text-sm">
-                                            <i data-lucide="clock" class="w-4 h-4"></i> {{ f.prediction.delay_risk_pct }}% (Moderate)
-                                        </div>
-                                        <span class="text-[11px] text-amber-600 font-medium block">Verification / NOC Pending</span>
                                     {% else %}
                                         <div class="flex items-center gap-1.5 text-emerald-700 font-black text-sm">
                                             <i data-lucide="check" class="w-4 h-4"></i> {{ f.prediction.delay_risk_pct }}% (Normal)
                                         </div>
-                                        <span class="text-[11px] text-emerald-600 font-medium block">On Track</span>
                                     {% endif %}
+                                    <span class="text-[11px] text-slate-500 block mt-0.5">ETA: {{ f.prediction.predicted_eta }}</span>
                                 </td>
                                 <td class="p-4">
-                                    <span class="font-bold text-slate-800 text-sm">{{ f.prediction.predicted_eta }}</span>
-                                    <span class="block text-slate-400 font-medium">~{{ f.prediction.predicted_days_remaining }} working days</span>
-                                </td>
-                                <td class="p-4">
-                                    <span class="font-bold text-orange-800 bg-orange-50 px-2.5 py-1 rounded border border-orange-200">
-                                        {{ f.prediction.bottleneck_stage.replace('_', ' ') }}
-                                    </span>
+                                    <button onclick="openDocInspectorModal('{{ f.id }}', '{{ f.applicant_name }}', '{{ f.service_name }}')" class="px-3 py-1.5 bg-blue-50 text-blue-800 hover:bg-blue-100 rounded-lg font-bold border border-blue-200 flex items-center gap-1">
+                                        <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> View & Verify Docs
+                                    </button>
                                 </td>
                                 <td class="p-4 text-right">
                                     {% if f.current_stage == 'DISPATCH_DIGILOCKER' %}
-                                        <span class="px-3.5 py-1.5 bg-emerald-50 text-emerald-700 font-bold rounded-lg border border-emerald-200 text-xs inline-flex items-center gap-1">
-                                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Completed
-                                        </span>
+                                        <a href="/certificate/{{ f.id }}" target="_blank" class="px-3 py-1.5 bg-emerald-100 text-emerald-800 font-bold rounded-lg border border-emerald-300 text-xs inline-flex items-center gap-1">
+                                            <i data-lucide="award" class="w-3.5 h-3.5"></i> E-Signed Certificate
+                                        </a>
+                                    {% elif f.current_stage == 'FINAL_APPROVAL' %}
+                                        <!-- E-Sign Portal Trigger for Final Officer -->
+                                        <button onclick="openEsignModal('{{ f.id }}', '{{ f.applicant_name }}', '{{ f.service_name }}')" 
+                                                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black shadow-md transition flex items-center gap-1.5 ml-auto">
+                                            <i data-lucide="pen-tool" class="w-4 h-4"></i> Digital E-Sign & Issue
+                                        </button>
                                     {% else %}
                                         <button onclick="openActionModal('{{ f.id }}', '{{ f.current_stage }}')" 
                                                 class="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold shadow-sm transition flex items-center gap-1 ml-auto">
-                                            <span>Update Stage</span>
+                                            <span>Advance Stage</span>
                                             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                         </button>
                                     {% endif %}
@@ -169,9 +129,108 @@
     </div>
 </div>
 
-<!-- Modal for Step-by-Step Stage Progression -->
+<!-- 1. MODAL: OFFICER DOCUMENT INSPECTION & VERIFICATION VIEWER -->
+<div id="docInspectorModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+                <h3 class="text-base font-black text-slate-900">Officer Document Scrutiny & Cross-Verification Deck</h3>
+                <p class="text-xs text-slate-500">Inspect citizen submitted files side-by-side with Income Tax (PAN) & UIDAI (Aadhaar) tokens.</p>
+            </div>
+            <button onclick="closeDocInspectorModal()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">✕</button>
+        </div>
+
+        <div class="space-y-3 text-xs">
+            <!-- Doc Item 1: PAN Card -->
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i> Permanent Account Number (PAN Card)
+                    </span>
+                    <div class="text-slate-500 text-[11px]">Verifier: <strong>Income Tax Department (CBDT)</strong> • Token: <span class="font-mono text-emerald-700">ITD-PAN-VERIFIED-9821</span></div>
+                </div>
+                <div class="flex gap-2">
+                    <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-[10px]">✓ Authentic & Valid</span>
+                </div>
+            </div>
+
+            <!-- Doc Item 2: Supporting Proof -->
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i> Supporting Scheme Proof / Title Deed
+                    </span>
+                    <div class="text-slate-500 text-[11px]">Verifier: <strong>State Authority Registry</strong> • Token: <span class="font-mono text-emerald-700">SGR-DOC-OK-5512</span></div>
+                </div>
+                <div class="flex gap-2">
+                    <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-[10px]">✓ Endorsed</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-2">
+            <button type="button" onclick="closeDocInspectorModal()" class="px-5 py-2 text-xs font-black bg-slate-900 text-white rounded-xl shadow">Close Scrutiny Viewer</button>
+        </div>
+    </div>
+</div>
+
+<!-- 2. MODAL: OFFICER DIGITAL E-SIGN PORTAL (For Final Officer) -->
+<div id="esignModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+                <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
+                    <i data-lucide="pen-tool" class="w-5 h-5 text-emerald-600"></i> Officer Digital E-Signature Portal
+                </h3>
+                <p class="text-xs text-slate-500">Issue official government sanction order and dispatch to citizen portal & WhatsApp.</p>
+            </div>
+            <button onclick="closeEsignModal()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">✕</button>
+        </div>
+
+        <form action="/officer/execute-esign" method="POST" class="space-y-4">
+            <input type="hidden" name="file_id" id="modalEsignFileId">
+            <input type="hidden" name="officer_id" value="{{ current_officer.id }}">
+
+            <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 space-y-2 text-xs">
+                <div class="flex justify-between">
+                    <span class="text-slate-600">Sanctioning Officer:</span>
+                    <strong class="text-slate-900">{{ current_officer.name }} ({{ current_officer.designation }})</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-600">Department Authority:</span>
+                    <strong class="text-orange-800">{{ current_officer.department }}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-600">Cryptographic Standard:</span>
+                    <strong class="text-slate-900 font-mono">CCA Approved DSC / e-Sign 2.0 (SHA256)</strong>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Enter DSC Security PIN *</label>
+                <input type="password" name="dsc_pin" value="gov@esign2026" required
+                       class="w-full px-3 py-2 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono">
+                <span class="text-[10px] text-slate-400">Demo DSC Passcode: <strong>gov@esign2026</strong></span>
+            </div>
+
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 flex items-center gap-2">
+                <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
+                E-Signing will immediately dispatch the certificate to citizen's portal & send a WhatsApp / SMS notification alert.
+            </div>
+
+            <div class="flex gap-2 justify-end pt-2">
+                <button type="button" onclick="closeEsignModal()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                <button type="submit" class="px-5 py-2 text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg flex items-center gap-1.5">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Apply Digital E-Sign & Issue Certificate
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 3. MODAL: SEQUENTIAL STAGE ADVANCEMENT -->
 <div id="actionModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-slate-200">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="text-base font-black text-slate-900">Sequential Workflow Advancement</h3>
             <button onclick="closeActionModal()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">✕</button>
@@ -187,7 +246,6 @@
                 <input type="text" id="displayFileId" disabled class="w-full px-3 py-2 text-xs bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono font-bold">
             </div>
 
-            <!-- Current Stage & Next Stage Progression Display -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                 <div class="flex justify-between items-center text-xs">
                     <span class="text-slate-500 font-bold">Current Stage:</span>
@@ -203,22 +261,14 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Official Review Remarks</label>
-                <textarea name="officer_notes" id="modalOfficerNotes" rows="2" placeholder="e.g. Cleared verification check; forward to next desk."
-                          class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"></textarea>
-            </div>
-
-            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2 font-medium">
-                <i data-lucide="send" class="w-4 h-4 text-emerald-600"></i>
-                Advancing will emit a signed HMAC Webhook to citizen's DigiLocker & SMS.
+                <label class="block text-xs font-bold text-slate-700 mb-1">Official Scrutiny Remarks</label>
+                <textarea name="officer_notes" id="modalOfficerNotes" rows="2" placeholder="e.g. Scrutiny cleared; forward to next desk."
+                          class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500"></textarea>
             </div>
 
             <div class="flex gap-2 justify-end pt-2">
                 <button type="button" onclick="closeActionModal()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-                <button type="submit" class="px-5 py-2 text-xs font-black bg-orange-600 text-white hover:bg-orange-700 rounded-lg shadow-md flex items-center gap-1.5">
-                    <span>Confirm & Advance to Next Stage</span>
-                    <i data-lucide="check" class="w-4 h-4"></i>
-                </button>
+                <button type="submit" class="px-5 py-2 text-xs font-black bg-orange-600 text-white hover:bg-orange-700 rounded-lg shadow">Confirm & Advance</button>
             </div>
         </form>
     </div>
@@ -239,6 +289,25 @@
         return stage.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
     }
 
+    function openDocInspectorModal(fileId, applicant, service) {
+        document.getElementById('docInspectorModal').classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function closeDocInspectorModal() {
+        document.getElementById('docInspectorModal').classList.add('hidden');
+    }
+
+    function openEsignModal(fileId, applicant, service) {
+        document.getElementById('modalEsignFileId').value = fileId;
+        document.getElementById('esignModal').classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function closeEsignModal() {
+        document.getElementById('esignModal').classList.add('hidden');
+    }
+
     function openActionModal(fileId, currentStage) {
         document.getElementById('modalFileId').value = fileId;
         document.getElementById('displayFileId').value = fileId;
@@ -252,8 +321,6 @@
         document.getElementById('modalCurrentStageBadge').textContent = formatStageName(currentStage);
         document.getElementById('modalNextStageBadge').textContent = formatStageName(nextStage);
         document.getElementById('modalNewStageInput').value = nextStage;
-        
-        document.getElementById('modalOfficerNotes').placeholder = "Cleared " + formatStageName(currentStage) + "; forwarding to " + formatStageName(nextStage) + ".";
 
         document.getElementById('actionModal').classList.remove('hidden');
         if (window.lucide) lucide.createIcons();

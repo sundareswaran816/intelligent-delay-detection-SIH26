@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Government Sanction Order - {{ file.id }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 sm:p-8 font-sans antialiased text-slate-800">
+    <div class="max-w-3xl mx-auto bg-white p-8 sm:p-12 rounded-2xl shadow-xl border-4 border-slate-900 space-y-6 relative overflow-hidden">
+        
+        <!-- Official Watermark -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+            <span class="text-8xl font-black text-slate-900 rotate-[-30deg]">GOVERNMENT OF INDIA</span>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center border-b-2 border-slate-900 pb-6 space-y-2 relative z-10">
+            <div class="text-3xl">🇮🇳</div>
+            <h2 class="text-sm font-bold uppercase tracking-widest text-slate-600">Government of India</h2>
+            <h1 class="text-xl font-black uppercase text-slate-900">{{ file.department }} DEPARTMENT</h1>
+            <p class="text-xs text-slate-500 font-medium">National File Verification & Service Delivery System (Civiora Portal)</p>
+        </div>
+
+        <!-- Order Details -->
+        <div class="space-y-4 text-xs relative z-10">
+            <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200">
+                <div>
+                    <span class="text-slate-500 font-bold">SANCTION ORDER REF NO:</span>
+                    <strong class="font-mono text-sm block text-blue-800">{{ file.id }}</strong>
+                </div>
+                <div class="text-right">
+                    <span class="text-slate-500 font-bold">DATE OF ISSUE:</span>
+                    <strong class="block text-slate-800">{{ file.esign.timestamp if file.esign else '09 Sep 2026' }}</strong>
+                </div>
+            </div>
+
+            <div class="p-4 bg-orange-50/50 rounded-xl border border-orange-200 space-y-2">
+                <h3 class="font-black text-sm text-slate-900">{{ file.service_name }}</h3>
+                <p class="text-slate-700 leading-relaxed font-medium">
+                    This is to certify that the application submitted by <strong>{{ file.applicant_name }}</strong> (Mobile: +91 {{ file.applicant_phone }}) has completed all statutory stages of scrutiny, document validation, and departmental cross-verification.
+                </p>
+                <div class="grid grid-cols-2 gap-2 pt-2 text-[11px] text-slate-600">
+                    <div><strong>Department Verifier:</strong> Income Tax (PAN) & UIDAI (Aadhaar)</div>
+                    <div><strong>Payment Status:</strong> Paid via Razorpay (₹{{ file.fee_paid }}.00)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Digital E-Signature Stamp (Officially Verified) -->
+        <div class="pt-6 border-t-2 border-dashed border-slate-300 relative z-10 flex flex-col sm:flex-row justify-between items-end gap-4">
+            <div class="text-[11px] text-slate-500 space-y-1">
+                <div class="font-bold text-slate-700">Digital Verification Token:</div>
+                <div class="font-mono text-[10px] bg-slate-100 p-1.5 rounded border border-slate-200">
+                    SHA256: {{ file.esign.cert_hash if file.esign else '4f88e9102c1109a823' }}
+                </div>
+                <p>Verify at: https://civiora.gov.in/verify</p>
+            </div>
+
+            <!-- E-Sign Official Stamp Box -->
+            <div class="p-4 bg-emerald-50 border-2 border-emerald-600 rounded-xl text-center space-y-1 w-full sm:w-72 shadow-sm">
+                <div class="inline-flex items-center gap-1 text-emerald-800 font-black text-xs">
+                    <span>✓ OFFICIALLY E-SIGNED</span>
+                </div>
+                <div class="text-xs font-black text-slate-900">{{ file.assigned_officer }}</div>
+                <div class="text-[10px] text-slate-600 font-semibold">{{ file.esign.designation if file.esign else 'Sanctioning Authority' }}</div>
+                <div class="text-[9px] text-slate-400 font-mono">{{ file.esign.timestamp if file.esign else '2026-09-09 14:30:00 IST' }}</div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="pt-6 border-t border-slate-100 flex justify-between items-center no-print relative z-10">
+            <a href="/citizen" class="text-xs font-bold text-slate-600 hover:text-slate-900">← Back to Citizen Hub</a>
+            <button onclick="window.print()" class="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs rounded-xl shadow transition">
+                🖨️ Print / Download PDF
+            </button>
+        </div>
+    </div>
+</body>
+</html>
