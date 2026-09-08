@@ -131,7 +131,7 @@
 
 <!-- 1. MODAL: DYNAMIC OFFICER DOCUMENT INSPECTION VIEWER (Shows Exact Uploaded Docs for Selected File) -->
 <div id="docInspectorModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+    <div class="bg-white rounded-2xl max-w-3xl w-full p-6 space-y-4 shadow-2xl border border-slate-200">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
                 <h3 class="text-base font-black text-slate-900">Officer Document Scrutiny & Cross-Verification Deck</h3>
@@ -140,7 +140,7 @@
             <button onclick="closeDocInspectorModal()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">✕</button>
         </div>
 
-        <div id="docInspectorList" class="space-y-3 text-xs max-h-96 overflow-y-auto pr-1">
+        <div id="docInspectorList" class="space-y-3 text-xs max-h-[30rem] overflow-y-auto pr-1">
             <!-- Dynamically populated per clicked file -->
         </div>
 
@@ -268,7 +268,7 @@
         return stage.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
     }
 
-    function openDocInspectorModal(fileId) {
+        function openDocInspectorModal(fileId) {
         const fileObj = OFFICER_FILES_DATA.find(f => f.id === fileId);
         if (!fileObj) return;
 
@@ -278,20 +278,38 @@
 
         if (fileObj.uploaded_docs && fileObj.uploaded_docs.length > 0) {
             fileObj.uploaded_docs.forEach((doc, idx) => {
+                const docId = doc.id || ('DOC-' + (idx+1));
+                const viewUrl = `/document/view/${fileObj.id}/${docId}`;
                 const item = document.createElement('div');
-                item.className = "p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between";
+                item.className = "p-4 bg-slate-50 hover:bg-white rounded-2xl border border-slate-200 transition space-y-3 shadow-sm";
                 item.innerHTML = `
-                    <div class="space-y-1">
-                        <span class="font-bold text-slate-900 flex items-center gap-2">
-                            <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i> ${doc.name}
-                        </span>
-                        <div class="text-slate-500 text-[11px]">
-                            File: <strong class="font-mono text-slate-700">${doc.filename || 'document_' + (idx+1) + '.pdf'}</strong> • Verifier: <strong class="text-blue-700">${doc.verifier}</strong>
+                    <div class="flex flex-wrap items-start justify-between gap-2">
+                        <div class="space-y-1">
+                            <span class="font-black text-slate-900 text-sm flex items-center gap-2">
+                                <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i> ${doc.name}
+                            </span>
+                            <div class="text-slate-500 text-xs">
+                                File: <strong class="font-mono text-slate-700">${doc.filename || 'document_' + (idx+1) + '.pdf'}</strong> • Verifier: <strong class="text-blue-700">${doc.verifier}</strong>
+                            </div>
+                            <div class="font-mono text-[11px] text-emerald-800 font-bold flex items-center gap-1">
+                                <span>Token:</span> <span class="bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">${doc.token}</span>
+                            </div>
                         </div>
-                        <div class="font-mono text-[10px] text-emerald-800 font-bold">Token: ${doc.token}</div>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-black rounded-lg text-[10px] border border-emerald-300">
+                                ✓ Authentic & Valid
+                            </span>
+                        </div>
                     </div>
-                    <div class="flex flex-col items-end gap-1">
-                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-[10px]">✓ Authentic & Valid</span>
+
+                    <!-- ACTION BUTTONS: VIEW COPY & OPEN IN NEW TAB -->
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200/80">
+                        <a href="${viewUrl}" target="_blank" class="px-3.5 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 font-black rounded-xl text-xs flex items-center gap-1.5 transition">
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open Document Copy
+                        </a>
+                        <button type="button" onclick="quickPreviewDoc('${fileObj.id}', '${docId}', '${doc.name.replace(/'/g, "\'")}', '${doc.verifier.replace(/'/g, "\'")}', '${doc.token}')" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow transition">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Quick Inspect
+                        </button>
                     </div>
                 `;
                 listContainer.appendChild(item);
@@ -302,6 +320,11 @@
 
         document.getElementById('docInspectorModal').classList.remove('hidden');
         if (window.lucide) lucide.createIcons();
+    }
+
+    function quickPreviewDoc(fileId, docId, docName, verifier, token) {
+        const viewUrl = `/document/view/${fileId}/${docId}`;
+        window.open(viewUrl, '_blank');
     }
 
     function closeDocInspectorModal() {

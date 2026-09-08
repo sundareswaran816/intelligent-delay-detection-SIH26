@@ -149,6 +149,26 @@ async def citizen_wizard_complete(
     dept_officers = [o for o in DATABASE["officers"] if o["department"] == service["department"]]
     assigned_officer = random.choice(dept_officers) if dept_officers else DATABASE["officers"][0]
     
+    # Generate uploaded docs dynamically matching the chosen service's required documents
+    uploaded_docs = []
+    for doc in service.get("required_documents", []):
+        doc_id = doc.get("id", f"DOC-{random.randint(100, 999)}")
+        clean_fn = doc["name"].lower().replace(" ", "_").replace("/", "_").replace("(", "").replace(")", "").replace("&", "and")[:30] + ".pdf"
+        token_prefix = doc_id.replace("DOC-", "")
+        token = f"{token_prefix}-VERIFIED-{random.randint(1000, 9999)}"
+        uploaded_docs.append({
+            "id": doc_id,
+            "name": doc["name"],
+            "type": doc_id,
+            "filename": clean_fn,
+            "verifier": doc.get("department_verifier", "Government Statutory Authority"),
+            "verified": True,
+            "token": token,
+            "instructions": doc.get("instructions", ""),
+            "accepted_formats": doc.get("accepted_formats", "PDF"),
+            "max_size_mb": doc.get("max_size_mb", 5)
+        })
+
     new_file = {
         "id": new_id,
         "applicant_name": applicant_name,
@@ -169,10 +189,7 @@ async def citizen_wizard_complete(
         "payment_ref": payment_ref,
         "fee_paid": service["fee"],
         "digilocker_verified": True,
-        "uploaded_docs": [
-            {"name": "Applicant PAN Card", "type": "PAN", "filename": "pan_applicant.pdf", "verifier": "Income Tax Department", "verified": True, "token": f"ITD-PAN-VERIFIED-{random.randint(1000,9999)}"},
-            {"name": "Supporting Proof / Scheme Document", "type": "DEED", "filename": "supporting_doc.pdf", "verifier": "State Authority Registry", "verified": True, "token": f"SGR-DOC-OK-{random.randint(1000,9999)}"}
-        ],
+        "uploaded_docs": uploaded_docs,
         "delay_guidance": {
             "delay_reason": "Application freshly submitted with all verified documents. In normal queue.",
             "required_action": "None. Waiting for departmental officer scrutiny.",
@@ -183,9 +200,44 @@ async def citizen_wizard_complete(
     
     DATABASE["files"].insert(0, new_file)
     log_audit("SERVICE_SUBMISSION", f"Citizen: {applicant_name}", new_id, f"Application for {service['name']} submitted & paid via Razorpay (₹{service['fee']}).")
-    trigger_webhook_event("NEW_SERVICE_APPLICATION", new_file, f"Application created. Paid via Razorpay ({payment_ref}). Income Tax & UIDAI verified.")
+    trigger_webhook_event("NEW_SERVICE_APPLICATION", new_file, f"Application created. Paid via Razorpay ({payment_ref}). All {len(uploaded_docs)} required documents authenticated.")
     
     return RedirectResponse(url=f"/citizen?search_id={new_id}&success=true", status_code=303)
+
+# ================= OFFICIAL DOCUMENT SCRUTINY VIEWER ROUTE =================
+@app.get("/document/view/{file_id}/{doc_id}", response_class=HTMLResponse)
+async def view_document_page(request: Request, file_id: str, doc_id: str):
+    file_obj = next((f for f in DATABASE["files"] if f["id"].lower() == file_id.strip().lower()), None)
+    if not file_obj:
+        return HTMLResponse("<h3>Application record not found.</h3>", status_code=404)
+    
+    doc = None
+    if file_obj.get("uploaded_docs"):
+        doc = next((d for d in file_obj["uploaded_docs"] if d.get("id", "").lower() == doc_id.strip().lower() or d.get("type", "").lower() == doc_id.strip().lower()), None)
+        if not doc and doc_id.isdigit() and int(doc_id) < len(file_obj["uploaded_docs"]):
+            doc = file_obj["uploaded_docs"][int(doc_id)]
+    
+    if not doc:
+        doc = {
+            "id": doc_id,
+            "name": f"Government Required Document ({doc_id})",
+            "type": doc_id,
+            "filename": f"{doc_id.lower()}.pdf",
+            "verifier": "Government Statutory Authority",
+            "verified": True,
+            "token": f"{doc_id}-VERIFIED-OK",
+            "instructions": "Official verified citizen upload."
+        }
+    
+    return templates.TemplateResponse(
+        request=request,
+        name="document_viewer.html",
+        context={
+            "file": file_obj,
+            "doc": doc,
+            "current_time": datetime.now().strftime("%d-%b-%Y %H:%M:%S IST")
+        }
+    )
 
 # ================= OFFICER DESK =================
 @app.get("/officer", response_class=HTMLResponse)
