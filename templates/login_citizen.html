@@ -27,13 +27,13 @@
         {% endif %}
 
         {% if not otp_sent %}
-            <!-- Stage 1: Enter Phone Number -->
+            <!-- Stage 1: Enter Phone Number (Empty by default) -->
             <form action="/auth/citizen/send-otp" method="POST" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Enter Registered Mobile Number</label>
                     <div class="relative">
                         <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">+91</span>
-                        <input type="tel" name="mobile_number" required placeholder="9876543210" value="9876543210" maxlength="10"
+                        <input type="tel" name="mobile_number" required placeholder="Enter 10-digit mobile number" value="" maxlength="10" autofocus
                                class="w-full pl-10 pr-3 py-2.5 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none font-mono">
                     </div>
                     <p class="text-[11px] text-slate-500 mt-1 font-medium">An SMS with a 6-digit OTP will be dispatched to this number.</p>
@@ -44,7 +44,7 @@
                 </button>
             </form>
         {% else %}
-            <!-- Stage 2: Submit OTP -->
+            <!-- Stage 2: Submit OTP (Empty OTP input, Demo code prompt preserved) -->
             <form action="/auth/citizen/verify-otp" method="POST" class="space-y-4">
                 <input type="hidden" name="mobile_number" value="{{ mobile_number }}">
 
@@ -61,7 +61,7 @@
                         <label class="block text-xs font-bold text-slate-700">Enter 6-Digit OTP</label>
                         <span class="text-[11px] text-emerald-800 font-black bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Demo Code: {{ demo_otp }}</span>
                     </div>
-                    <input type="text" name="otp" required maxlength="6" value="{{ demo_otp }}" placeholder="123456" autofocus
+                    <input type="text" name="otp" required maxlength="6" value="" placeholder="Enter 6-digit OTP" autofocus
                            class="w-full px-3 py-2.5 text-sm font-black border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none font-mono tracking-widest text-center">
                 </div>
 

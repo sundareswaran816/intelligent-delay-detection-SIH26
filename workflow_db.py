@@ -1,7 +1,6 @@
 """
 Civiora SIH Webhook, Workflow, Payment & Departmental Cross-Verification Engine
-Handles services catalog with distinct document requirements per service,
-Razorpay payments, DigiLocker verification, E-Sign records, and Department verifiers.
+With enriched government service catalog.
 """
 import json
 import time
@@ -49,7 +48,7 @@ SERVICES_CATALOG = [
             },
             {
                 "id": "DOC-PPO",
-                "name": "Pension Payment Order (PPO) Copy / Death Certificate",
+                "name": "Pension Payment Order (PPO) / Succession Certificate",
                 "department_verifier": "Central Pension Accounting Office (CPAO)",
                 "mandatory": True,
                 "accepted_formats": "PDF",
@@ -151,6 +150,120 @@ SERVICES_CATALOG = [
                 "instructions": "Current valid fire clearance or civic trade license."
             }
         ]
+    },
+    {
+        "id": "SRV-REV-04",
+        "name": "Income & Asset Certificate for EWS / Scholarship",
+        "department": "REVENUE",
+        "department_name": "Department of Land & Revenue",
+        "category": "Certificates & Social Welfare",
+        "fee": 30,
+        "sla_days": 5,
+        "required_documents": [
+            {
+                "id": "DOC-PAN",
+                "name": "Applicant / Father PAN Card",
+                "department_verifier": "Income Tax Department (ITD)",
+                "mandatory": True,
+                "accepted_formats": "PDF, JPG",
+                "max_size_mb": 5,
+                "instructions": "Tax return / Form 16 or PAN card."
+            },
+            {
+                "id": "DOC-SALARY",
+                "name": "Employer Salary Slip / Village Income Affidavit",
+                "department_verifier": "Revenue Circle Inspector & Tahsildar",
+                "mandatory": True,
+                "accepted_formats": "PDF, JPG",
+                "max_size_mb": 5,
+                "instructions": "Salary slip or notarized income self-declaration."
+            },
+            {
+                "id": "DOC-RATION",
+                "name": "NFSA Digital Ration Card / BPL Proof",
+                "department_verifier": "Food & Civil Supplies Department",
+                "mandatory": True,
+                "accepted_formats": "PDF, JPG",
+                "max_size_mb": 5,
+                "instructions": "Ration card showing family member census list."
+            }
+        ]
+    },
+    {
+        "id": "SRV-MUN-05",
+        "name": "Birth & Domicile Official Certificate",
+        "department": "MUNICIPAL",
+        "department_name": "Urban Local Bodies & Civic Affairs",
+        "category": "Civil Registration",
+        "fee": 25,
+        "sla_days": 4,
+        "required_documents": [
+            {
+                "id": "DOC-HOSPITAL",
+                "name": "Hospital Birth Discharge Certificate / Form 1",
+                "department_verifier": "Chief Medical Officer / Registrar Births",
+                "mandatory": True,
+                "accepted_formats": "PDF, JPG",
+                "max_size_mb": 5,
+                "instructions": "Institutional delivery birth slip from hospital."
+            },
+            {
+                "id": "DOC-PARENTS",
+                "name": "Parents Aadhaar & Marriage Proof",
+                "department_verifier": "UIDAI & Marriage Registry",
+                "mandatory": True,
+                "accepted_formats": "PDF, JPG",
+                "max_size_mb": 5,
+                "instructions": "Aadhaar cards of mother and father."
+            },
+            {
+                "id": "DOC-RESIDENCE",
+                "name": "Utility Bill / Domicile Residence Proof",
+                "department_verifier": "State Electricity Board / Civic Registry",
+                "mandatory": True,
+                "accepted_formats": "PDF, JPG",
+                "max_size_mb": 5,
+                "instructions": "Electricity or water bill showing address."
+            }
+        ]
+    },
+    {
+        "id": "SRV-EDU-06",
+        "name": "Post-Matric Merit Scholarship Sanction",
+        "department": "EDUCATION",
+        "department_name": "Higher Education & Scholarship Wing",
+        "category": "Higher Education & DBT",
+        "fee": 0,
+        "sla_days": 8,
+        "required_documents": [
+            {
+                "id": "DOC-PAN",
+                "name": "Student / Guardian PAN Card",
+                "department_verifier": "Income Tax Department",
+                "mandatory": True,
+                "accepted_formats": "PDF, JPG",
+                "max_size_mb": 5,
+                "instructions": "Permanent Account Number."
+            },
+            {
+                "id": "DOC-MARKSHEET",
+                "name": "Class 12 / Degree Marksheet (DigiLocker Verified)",
+                "department_verifier": "National Academic Depository (NAD / DigiLocker)",
+                "mandatory": True,
+                "accepted_formats": "PDF",
+                "max_size_mb": 5,
+                "instructions": "Digital mark sheet with board validation."
+            },
+            {
+                "id": "DOC-COLLEGE",
+                "name": "College Admission Bonafide & Fee Receipt",
+                "department_verifier": "University Registrar Portal",
+                "mandatory": True,
+                "accepted_formats": "PDF",
+                "max_size_mb": 5,
+                "instructions": "Official bonafide certificate with college seal."
+            }
+        ]
     }
 ]
 
@@ -164,7 +277,8 @@ DATABASE = {
     "officers": [
         {"id": "OFF-101", "name": "Rajesh Sharma", "department": "PENSION", "role": "Senior Sanctioning Officer", "active_load": 18, "status": "ACTIVE", "designation": "Deputy Secretary (Pension)"},
         {"id": "OFF-102", "name": "Priya Deshmukh", "department": "REVENUE", "role": "Tahsildar & Mutation Officer", "active_load": 24, "status": "HIGH_LOAD", "designation": "Executive Tahsildar"},
-        {"id": "OFF-103", "name": "Anil Verma", "department": "MUNICIPAL", "role": "Chief Sanctioning Authority", "active_load": 9, "status": "ACTIVE", "designation": "Assistant Municipal Commissioner"}
+        {"id": "OFF-103", "name": "Anil Verma", "department": "MUNICIPAL", "role": "Chief Sanctioning Authority", "active_load": 9, "status": "ACTIVE", "designation": "Assistant Municipal Commissioner"},
+        {"id": "OFF-104", "name": "Dr. Sandeep Kulkarni", "department": "EDUCATION", "role": "Director of Higher Education", "active_load": 7, "status": "ACTIVE", "designation": "Joint Director (Scholarships)"}
     ],
     "files": [
         {
@@ -244,6 +358,29 @@ DATABASE = {
     "audit_logs": [],
     "webhook_logs": []
 }
+
+def cross_verify_with_department(doc_type: str, doc_name: str, applicant_name: str):
+    if "PAN" in doc_type.upper() or "PAN" in doc_name.upper():
+        return {
+            "department": "Income Tax Department (CBDT / NSDL)",
+            "status": "AUTHENTIC_VERIFIED",
+            "message": f"PAN record matched with Income Tax Database for {applicant_name}. Status: ACTIVE.",
+            "verification_token": f"ITD-PAN-{hashlib.md5(applicant_name.encode()).hexdigest()[:8].upper()}"
+        }
+    elif "AADHAAR" in doc_type.upper() or "AADHAAR" in doc_name.upper():
+        return {
+            "department": "Unique Identification Authority of India (UIDAI)",
+            "status": "AUTHENTIC_VERIFIED",
+            "message": f"UIDAI e-KYC record validated via DigiLocker OTP bridge for {applicant_name}.",
+            "verification_token": f"UIDAI-KYC-{hashlib.md5((applicant_name+'uidai').encode()).hexdigest()[:8].upper()}"
+        }
+    else:
+        return {
+            "department": "State Government Directorate / Municipal Registry",
+            "status": "AUTHENTIC_VERIFIED",
+            "message": f"Endorsement authenticity confirmed in official registry for {doc_name}.",
+            "verification_token": f"SGR-DOC-{hashlib.md5(doc_name.encode()).hexdigest()[:8].upper()}"
+        }
 
 def enrich_file_with_prediction(file_obj):
     officer = next((o for o in DATABASE["officers"] if o["id"] == file_obj.get("assigned_officer_id")), None)
