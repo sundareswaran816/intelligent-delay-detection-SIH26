@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0"
 title Civiora - Application & File Delay Detection Intelligence Portal (SIH 2026)
 color 0B
 cls
