@@ -2,7 +2,6 @@
 Civiora Intelligent Delay Prediction Engine (Python AI/ML Service)
 Smart India Hackathon 2026 - Problem Statement: Intelligent Delay Detection in Government Service Delivery
 """
-import numpy as np
 from datetime import datetime, timedelta
 
 DEPARTMENT_BENCHMARKS = {
